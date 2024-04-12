@@ -1,9 +1,12 @@
 package com.kalma.Patienten.Dossier.controllers;
 
+import com.kalma.Patienten.Dossier.exceptions.InputNotValidException;
+import com.kalma.Patienten.Dossier.exceptions.RecordNotFoundException;
 import com.kalma.Patienten.Dossier.models.Person;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 
@@ -21,7 +24,10 @@ public class PersonController {
     public ResponseEntity<Person> getPersonById(@PathVariable int id) {
         if(id >= 0 && id < this.persons.size()){
             return new ResponseEntity<>(this.persons.get(id), HttpStatus.OK);
-        } else{
+        } if(id < 0){
+            throw new RecordNotFoundException("Deze id bestaat niet");
+        }
+        else{
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
     }
@@ -38,6 +44,9 @@ public class PersonController {
     @GetMapping("/search")
     public ResponseEntity<ArrayList<Person>> searchPersonByName(@RequestParam String query) {
 
+        if(query.matches(".*\\d.*")){
+            throw new InputNotValidException("Dit is een getal");
+        }
         if(query != null && !query.isEmpty())
         {
             ArrayList<Person> matchingPersons = new ArrayList<>();
