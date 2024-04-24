@@ -1,17 +1,22 @@
 package com.kalma.Patienten.Dossier.dto;
 
-//input & output dto
-
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-public class PatientDto {
+import java.util.List;
+
+public class EmployeeDto {
     public Long id;
 
     public String firstName;
 
+    @NotBlank
     public String lastName;
 
     public String fullName;
+
+    @NotBlank
+    public String role;
+
+    public List<Long> patientIds;
 }

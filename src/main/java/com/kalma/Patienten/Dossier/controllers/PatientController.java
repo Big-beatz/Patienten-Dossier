@@ -18,17 +18,15 @@ import java.util.List;
 @RequestMapping("/patients")
 public class PatientController {
 
-    private final PatientService service;
     private final PatientService patientService;
 
     public PatientController(PatientService service, PatientService patientService) {
-        this.service = service;
         this.patientService = patientService;
     };
 
     @GetMapping
     public ResponseEntity<List<PatientDto>> getAllPatients() {
-        return ResponseEntity.ok(service.getAllPatients());
+        return ResponseEntity.ok(patientService.getAllPatients());
     }
 //
 //    @GetMapping("/firstName")
@@ -59,11 +57,12 @@ public class PatientController {
             }
             return ResponseEntity.badRequest().body(sb.toString());
         } else {
-            patientDto = service.createPatient(patientDto);
+            patientDto = patientService.createPatient(patientDto);
 
             URI uri = URI.create(
                     ServletUriComponentsBuilder.
-                            fromCurrentRequest().path("/" + patientDto.id).
+                            fromCurrentRequest().
+                            path("/" + patientDto.id).
                             toUriString());
 
             return ResponseEntity.created(uri).body(patientDto);

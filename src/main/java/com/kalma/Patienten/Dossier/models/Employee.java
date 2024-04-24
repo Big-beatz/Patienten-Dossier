@@ -5,9 +5,10 @@ import jakarta.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
+
 @Entity
-@Table(name="patients")
-public class Patient {
+@Table(name="employees")
+public class Employee {
 
     //properties
 
@@ -24,13 +25,19 @@ public class Patient {
     @Column(name="full_name", length = 256)
     private String fullName;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    private Set<Employee> employees = new HashSet<>();
+    @Column(name="role", length = 128)
+    private String role;
 
+    @ManyToMany(mappedBy = "employees")
+    private Set<Patient> patients = new HashSet<>();
     //getters & setters
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getFirstName() {
@@ -55,5 +62,21 @@ public class Patient {
 
     public void setFullName(String fullName) {
         this.fullName = firstName + " " + lastName;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public Set<Patient> getPatients() {
+        return patients;
+    }
+
+    public void setPatients(Set<Patient> patients) {
+        this.patients = patients;
     }
 }

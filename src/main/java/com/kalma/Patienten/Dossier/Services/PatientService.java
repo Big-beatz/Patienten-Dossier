@@ -12,20 +12,17 @@ import java.util.List;
 public class PatientService {
 
     private final PatientRepository repos;
-    private final PatientRepository patientRepository;
 
-    public PatientService(PatientRepository repos, PatientRepository patientRepository) {
+    public PatientService(PatientRepository repos) {
     this.repos = repos;
-        this.patientRepository = patientRepository;
     }
 
     public PatientDto createPatient(PatientDto patientDto){
-        Patient patient = new Patient();
-        patient.setFirstName(patientDto.firstName);
-        patient.setLastName(patientDto.lastName);
-        patient.setFullName(patientDto.fullName);
+        Patient patient = dtoToPatient(patientDto);
         repos.save(patient);
+
         patientDto.id = patient.getId();
+        patientDto.fullName=patient.getFullName();
 
         return patientDto;
     }
@@ -34,18 +31,20 @@ public class PatientService {
         List<Patient> patients = repos.findAll();
         List<PatientDto> patientDtos = new ArrayList<>();
 
-        for (Patient p : patients) {
-            patientDtos.add(patientToDto(p));
+        for (Patient patient : patients) {
+            patientDtos.add(patientToDto(patient));
         }
         return patientDtos;
     }
 
-    public Patient dtoToPatient(PatientDto patientDto){
+
+    //mapping functions
+    public Patient dtoToPatient(PatientDto dto){
         Patient patient = new Patient();
 
-        patient.setFirstName(patientDto.firstName);
-        patient.setLastName(patientDto.lastName);
-        patient.setFullName(patientDto.fullName);
+        patient.setFirstName(dto.firstName);
+        patient.setLastName(dto.lastName);
+        patient.setFullName(dto.fullName);
 
         return patient;
     }
@@ -56,7 +55,7 @@ public class PatientService {
         patientDto.id = patient.getId();
         patientDto.firstName = patient.getFirstName();
         patientDto.lastName = patient.getLastName();
-        patientDto.fullName = patient.getFullName();
+        patientDto.fullName = patientDto.firstName + " " + patientDto.lastName;
 
         return patientDto;
     }
