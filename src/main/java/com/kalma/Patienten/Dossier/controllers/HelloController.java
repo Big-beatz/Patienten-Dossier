@@ -68,5 +68,11 @@ public class HelloController {
         } else{
             return userAddress;
         }
+
+    }
+
+    @GetMapping("/secret")
+    public String tellSecret() {
+        return "Secret";
     }
 }
