@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name="dossiers")
@@ -17,8 +18,8 @@ public class Dossier {
     @Column(name="dossier_is_closed")
     private boolean dossierIsClosed;
 
-    // todo find a way to add reports in the dossier
-    // private List<Reports> reports = new ArrayList<>();
+    @Column(name="name")
+    private String name;
 
     @OneToOne(mappedBy = "dossier")
     @JoinColumn(name="patient_id", nullable = false)
@@ -26,10 +27,6 @@ public class Dossier {
 
     @OneToMany(mappedBy = "dossier")
     List<Report> reports;
-
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="employee_id")
-    Employee employee;
 
     public Long getId() {
         return id;
@@ -45,6 +42,31 @@ public class Dossier {
 
     public void setDossierIsClosed(boolean dossierIsClosed) {
         this.dossierIsClosed = dossierIsClosed;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String dossierName) {
+        this.name = dossierName;
+    }
+
+
+    public Patient getPatient() {
+        return patient;
+    }
+
+    public void setPatient(Patient patient) {
+        this.patient = patient;
+    }
+
+    public List<Report> getReports() {
+        return reports;
+    }
+
+    public void setReports(List<Report> reports) {
+        this.reports = reports;
     }
 
 }
