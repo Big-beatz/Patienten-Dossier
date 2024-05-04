@@ -11,15 +11,15 @@ import java.util.List;
 @Service
 public class PatientService {
 
-    private final PatientRepository repos;
+    private final PatientRepository patientRepository;
 
-    public PatientService(PatientRepository repos) {
-    this.repos = repos;
+    public PatientService(PatientRepository repository) {
+    this.patientRepository = repository;
     }
 
     public PatientDto createPatient(PatientDto patientDto){
         Patient patient = dtoToPatient(patientDto);
-        repos.save(patient);
+        patientRepository.save(patient);
 
         patientDto.id = patient.getId();
         patientDto.fullName=patient.getFullName();
@@ -28,7 +28,7 @@ public class PatientService {
     }
 
     public List<PatientDto> getAllPatients(){
-        List<Patient> patients = repos.findAll();
+        List<Patient> patients = patientRepository.findAll();
         List<PatientDto> patientDtos = new ArrayList<>();
 
         for (Patient patient : patients) {
@@ -36,6 +36,8 @@ public class PatientService {
         }
         return patientDtos;
     }
+
+
 
 
     //mapping functions

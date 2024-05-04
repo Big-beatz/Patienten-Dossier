@@ -17,8 +17,8 @@ public class EmployeeService {
     private final EmployeeRepository employeeRepository;
     private final PatientRepository patientRepository;
 
-    public EmployeeService(EmployeeRepository repos, PatientRepository patientRepository) {
-        this.employeeRepository = repos;
+    public EmployeeService(EmployeeRepository repository, PatientRepository patientRepository) {
+        this.employeeRepository = repository;
         this.patientRepository = patientRepository;
     }
 

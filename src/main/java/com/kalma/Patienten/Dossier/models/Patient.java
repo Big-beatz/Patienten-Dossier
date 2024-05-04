@@ -10,7 +10,6 @@ import java.util.Set;
 public class Patient {
 
     //properties
-
     @Id
     @GeneratedValue
     private Long id;
@@ -26,6 +25,9 @@ public class Patient {
 
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Employee> employees = new HashSet<>();
+
+    @OneToOne(cascade = CascadeType.ALL)
+    private Dossier dossier;
 
     //getters & setters
 
@@ -55,5 +57,21 @@ public class Patient {
 
     public void setFullName(String fullName) {
         this.fullName = firstName + " " + lastName;
+    }
+
+    public Set<Employee> getEmployees() {
+        return employees;
+    }
+
+    public void setEmployees(Set<Employee> employees) {
+        this.employees = employees;
+    }
+
+    public Dossier getDossier() {
+        return dossier;
+    }
+
+    public void setDossier(Dossier dossier) {
+        this.dossier = dossier;
     }
 }

@@ -3,6 +3,7 @@ package com.kalma.Patienten.Dossier.models;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
@@ -30,7 +31,12 @@ public class Employee {
 
     @ManyToMany(mappedBy = "employees")
     private Set<Patient> patients = new HashSet<>();
+
+    @OneToMany(mappedBy = "employee")
+    List<Dossier> dossiers;
     //getters & setters
+
+
 
     public Long getId() {
         return id;
@@ -72,11 +78,20 @@ public class Employee {
         this.role = role;
     }
 
+
     public Set<Patient> getPatients() {
         return patients;
     }
 
     public void setPatients(Set<Patient> patients) {
         this.patients = patients;
+    }
+
+    public List<Dossier> getDossiers() {
+        return dossiers;
+    }
+
+    public void setDossiers(List<Dossier> dossiers) {
+        this.dossiers = dossiers;
     }
 }

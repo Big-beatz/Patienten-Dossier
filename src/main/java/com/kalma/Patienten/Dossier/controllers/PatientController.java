@@ -2,9 +2,7 @@ package com.kalma.Patienten.Dossier.controllers;
 
 import com.kalma.Patienten.Dossier.Services.PatientService;
 import com.kalma.Patienten.Dossier.dto.PatientDto;
-import com.kalma.Patienten.Dossier.models.Patient;
 import jakarta.validation.Valid;
-import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -18,6 +16,7 @@ import java.util.List;
 @RequestMapping("/patients")
 public class PatientController {
 
+
     private final PatientService patientService;
 
     public PatientController(PatientService service, PatientService patientService) {
@@ -28,7 +27,7 @@ public class PatientController {
     public ResponseEntity<List<PatientDto>> getAllPatients() {
         return ResponseEntity.ok(patientService.getAllPatients());
     }
-//
+//    can move these to service
 //    @GetMapping("/firstName")
 //    public ResponseEntity<List<Patient>> getPatientByFirstName(@RequestParam String firstName) {
 //        return ResponseEntity.ok(patientRepository.findPatientByFirstName(firstName));
