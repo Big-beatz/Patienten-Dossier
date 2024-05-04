@@ -1,9 +1,6 @@
 package com.kalma.Patienten.Dossier.controllers;
 
-
-import com.kalma.Patienten.Dossier.Services.DossierService;
 import com.kalma.Patienten.Dossier.Services.ReportService;
-import com.kalma.Patienten.Dossier.dto.DossierDto;
 import com.kalma.Patienten.Dossier.dto.ReportDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

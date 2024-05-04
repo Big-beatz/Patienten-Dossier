@@ -1,9 +1,7 @@
 package com.kalma.Patienten.Dossier.Services;
 
 import com.kalma.Patienten.Dossier.dto.DossierDto;
-import com.kalma.Patienten.Dossier.dto.EmployeeDto;
 import com.kalma.Patienten.Dossier.models.Dossier;
-import com.kalma.Patienten.Dossier.models.Employee;
 import com.kalma.Patienten.Dossier.repository.DossierRepository;
 import org.springframework.stereotype.Service;
 
