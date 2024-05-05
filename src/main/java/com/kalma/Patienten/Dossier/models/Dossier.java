@@ -2,9 +2,7 @@ package com.kalma.Patienten.Dossier.models;
 
 import jakarta.persistence.*;
 
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name="dossiers")

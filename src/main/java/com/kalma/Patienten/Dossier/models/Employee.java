@@ -14,7 +14,7 @@ public class Employee {
     //properties
 
     @Id
-    @GeneratedValue
+    @GeneratedValue()
     private Long id;
 
     @Column(name="first_name", length = 128)
@@ -33,9 +33,8 @@ public class Employee {
     private Set<Patient> patients = new HashSet<>();
 
     @OneToMany(mappedBy = "employee")
-    List<Dossier> dossiers;
+    List<Report> reports;
     //getters & setters
-
 
 
     public Long getId() {
@@ -87,11 +86,11 @@ public class Employee {
         this.patients = patients;
     }
 
-    public List<Dossier> getDossiers() {
-        return dossiers;
+    public List<Report> getReports() {
+        return reports;
     }
 
-    public void setDossiers(List<Dossier> dossiers) {
-        this.dossiers = dossiers;
+    public void setReports(List<Report> reports) {
+        this.reports = reports;
     }
 }

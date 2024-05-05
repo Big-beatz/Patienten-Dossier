@@ -23,6 +23,9 @@ public class Report {
     @JoinColumn(name = "dossier_id")
     Dossier dossier;
 
+    @ManyToOne()
+    @JoinColumn(name="employees_id")
+    Employee employee;
 
     public Long getId() {
         return id;
