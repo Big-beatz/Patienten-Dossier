@@ -24,6 +24,11 @@ public class Patient {
     private String fullName;
 
     @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name="employee_patients",
+            joinColumns = @JoinColumn(name="patient_id"),
+            inverseJoinColumns = @JoinColumn(name="employee_id")
+    )
     private Set<Employee> employees = new HashSet<>();
 
     @OneToOne(cascade = CascadeType.ALL)

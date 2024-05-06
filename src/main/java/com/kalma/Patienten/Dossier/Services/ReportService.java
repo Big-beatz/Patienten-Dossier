@@ -45,6 +45,8 @@ public class ReportService {
         reportDto.id = report.getId();
         reportDto.body = report.getBody();
         reportDto.date = report.getDate();
+        reportDto.dossierId = report.getDossier().getId();
+        reportDto.employeeId = report.getEmployee().getId();
 
         return reportDto;
     }

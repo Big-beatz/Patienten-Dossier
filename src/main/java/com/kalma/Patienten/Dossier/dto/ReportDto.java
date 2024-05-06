@@ -11,4 +11,6 @@ public class ReportDto {
     public String body;
 
     public Long dossierId;
+
+    public Long employeeId;
 }

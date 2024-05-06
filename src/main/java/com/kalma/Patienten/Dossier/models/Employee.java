@@ -10,11 +10,10 @@ import java.util.Set;
 @Entity
 @Table(name="employees")
 public class Employee {
-
     //properties
 
     @Id
-    @GeneratedValue()
+    @GeneratedValue
     private Long id;
 
     @Column(name="first_name", length = 128)
@@ -29,7 +28,12 @@ public class Employee {
     @Column(name="role", length = 128)
     private String role;
 
-    @ManyToMany(mappedBy = "employees")
+    @ManyToMany
+    @JoinTable(
+            name="employee_patients",
+            joinColumns = @JoinColumn(name="employee_id"),
+            inverseJoinColumns = @JoinColumn(name="patient_id")
+    )
     private Set<Patient> patients = new HashSet<>();
 
     @OneToMany(mappedBy = "employee")
@@ -81,6 +85,7 @@ public class Employee {
     public Set<Patient> getPatients() {
         return patients;
     }
+
 
     public void setPatients(Set<Patient> patients) {
         this.patients = patients;

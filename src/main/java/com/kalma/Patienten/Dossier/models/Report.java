@@ -19,6 +19,8 @@ public class Report {
     @Column(name="body", length = 1000)
     private String body;
 
+
+
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "dossier_id")
     Dossier dossier;
@@ -49,6 +51,22 @@ public class Report {
 
     public void setBody(String reportBody) {
         this.body = reportBody;
+    }
+
+    public Dossier getDossier() {
+        return dossier;
+    }
+
+    public void setDossier(Dossier dossier) {
+        this.dossier = dossier;
+    }
+
+    public Employee getEmployee() {
+        return employee;
+    }
+
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
     }
 
 }

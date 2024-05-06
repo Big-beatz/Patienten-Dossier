@@ -1,6 +1,7 @@
 package com.kalma.Patienten.Dossier.Services;
 
 import com.kalma.Patienten.Dossier.dto.PatientDto;
+import com.kalma.Patienten.Dossier.models.Employee;
 import com.kalma.Patienten.Dossier.models.Patient;
 import com.kalma.Patienten.Dossier.repository.PatientRepository;
 import org.springframework.stereotype.Service;
@@ -37,7 +38,13 @@ public class PatientService {
         return patientDtos;
     }
 
-
+    public List<Long> getEmployeeIdList(Patient patient) {
+        List<Long> employeeIdList = new ArrayList();
+        for(Employee employee : patient.getEmployees()){
+            employeeIdList.add(employee.getId());
+        }
+        return employeeIdList;
+    }
 
 
     //mapping functions
@@ -58,6 +65,8 @@ public class PatientService {
         patientDto.firstName = patient.getFirstName();
         patientDto.lastName = patient.getLastName();
         patientDto.fullName = patientDto.firstName + " " + patientDto.lastName;
+        patientDto.dossierId = patient.getDossier().getId();
+        patientDto.employeeIds = getEmployeeIdList(patient);
 
         return patientDto;
     }

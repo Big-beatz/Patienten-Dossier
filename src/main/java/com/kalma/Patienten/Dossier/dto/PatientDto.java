@@ -2,9 +2,7 @@ package com.kalma.Patienten.Dossier.dto;
 
 //input & output dto
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import java.util.List;
 
 public class PatientDto {
     public Long id;
@@ -14,4 +12,9 @@ public class PatientDto {
     public String lastName;
 
     public String fullName;
+
+    public List<Long> employeeIds;
+
+    public Long dossierId;
+
 }

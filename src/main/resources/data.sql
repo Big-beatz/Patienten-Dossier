@@ -83,7 +83,7 @@ where reports.date >= '2024-01-01' AND reports.date <= '2024-12-31'
   AND employees.full_name = 'Mickey Mouse';
 
 --link patients and employees
-INSERT INTO patients_employees (patients_id, employees_id)
+INSERT INTO employee_patients (patient_id, employee_id)
 VALUES
     (
         (SELECT id FROM patients WHERE full_name = 'Linda de Mol'),
