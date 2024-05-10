@@ -2,6 +2,7 @@ package com.kalma.Patienten.Dossier.dto;
 
 //input & output dto
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PatientDto {
@@ -13,7 +14,7 @@ public class PatientDto {
 
     public String fullName;
 
-    public List<Long> employeeIds;
+    public List<Long> employeeIds = new ArrayList<>();
 
     public Long dossierId;
 

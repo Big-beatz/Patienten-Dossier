@@ -4,6 +4,7 @@ import com.kalma.Patienten.Dossier.models.Employee;
 import com.kalma.Patienten.Dossier.models.Report;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 public class DossierDto {
@@ -14,6 +15,7 @@ public class DossierDto {
 
     public String name;
 
-    public List<Report> reportIds;
+    public List<Report> reportIds = new ArrayList<>();
 
+    public Long patientId;
 }

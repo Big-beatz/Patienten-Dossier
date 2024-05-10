@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @Slf4j
@@ -42,7 +43,6 @@ public class EmployeeService {
             }
             employeeRepository.save(employee);
         }
-
         return employeeDto;
     }
 
@@ -78,9 +78,10 @@ public class EmployeeService {
     public Employee dtoToEmployee(EmployeeDto dto) {
         Employee employee = new Employee();
 
+        employee.setId(dto.id);
         employee.setFirstName(dto.firstName);
         employee.setLastName(dto.lastName);
-        employee.setFullName(dto.fullName);
+        employee.setFullName(dto.firstName + " " + dto.lastName);
         employee.setRole(dto.role);
         return employee;
     }

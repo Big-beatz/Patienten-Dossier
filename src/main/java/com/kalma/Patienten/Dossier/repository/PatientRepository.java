@@ -10,4 +10,5 @@ public interface PatientRepository extends JpaRepository<Patient, Long> {
 
     public List<Patient> findPatientByLastNameContaining(String lastName);
 
+    public Patient findPatientById(Long id);
 }

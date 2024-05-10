@@ -31,7 +31,11 @@ public class Patient {
     )
     private Set<Employee> employees = new HashSet<>();
 
-    @OneToOne(cascade = CascadeType.ALL)
+
+    @OneToOne(
+            fetch = FetchType.LAZY
+    )
+    @JoinColumn(name = "dossier_id", referencedColumnName = "id")
     private Dossier dossier;
 
     //getters & setters

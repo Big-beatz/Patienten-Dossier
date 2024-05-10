@@ -2,6 +2,7 @@ package com.kalma.Patienten.Dossier.dto;
 
 import jakarta.validation.constraints.NotBlank;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class EmployeeDto {
@@ -17,6 +18,6 @@ public class EmployeeDto {
     @NotBlank
     public String role;
 
-    public List<Long> patientIds;
+    public List<Long> patientIds = new ArrayList<>();
 
 }

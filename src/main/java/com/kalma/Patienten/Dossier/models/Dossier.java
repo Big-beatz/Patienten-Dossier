@@ -1,8 +1,11 @@
 package com.kalma.Patienten.Dossier.models;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.LazyToOne;
+import org.hibernate.annotations.LazyToOneOption;
 
 import java.util.List;
+import java.util.Optional;
 
 @Entity
 @Table(name="dossiers")
@@ -16,14 +19,15 @@ public class Dossier {
     @Column(name="dossier_is_closed")
     private boolean dossierIsClosed;
 
-    @Column(name="name")
+    @Column(name="name", length = 256)
     private String name;
 
-    @OneToOne(mappedBy = "dossier")
-    @JoinColumn(name="patient_id", nullable = false)
+    @OneToOne(
+            mappedBy = "dossier"
+    )
     Patient patient;
 
-    @OneToMany(mappedBy = "dossier")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "dossier", fetch = FetchType.LAZY)
     List<Report> reports;
 
     public Long getId() {

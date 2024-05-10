@@ -1,5 +1,6 @@
 package com.kalma.Patienten.Dossier.controllers;
 
+import com.kalma.Patienten.Dossier.Services.DossierService;
 import com.kalma.Patienten.Dossier.Services.PatientService;
 import com.kalma.Patienten.Dossier.dto.PatientDto;
 import jakarta.validation.Valid;
@@ -18,9 +19,11 @@ public class PatientController {
 
 
     private final PatientService patientService;
+    private final DossierService dossierService;
 
-    public PatientController(PatientService patientService) {
+    public PatientController(PatientService patientService, DossierService dossierService) {
         this.patientService = patientService;
+        this.dossierService = dossierService;
     };
 
     @GetMapping
