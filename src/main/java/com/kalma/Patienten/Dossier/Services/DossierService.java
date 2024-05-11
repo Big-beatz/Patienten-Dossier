@@ -2,7 +2,9 @@ package com.kalma.Patienten.Dossier.Services;
 
 import com.kalma.Patienten.Dossier.dto.DossierDto;
 import com.kalma.Patienten.Dossier.models.Dossier;
+import com.kalma.Patienten.Dossier.models.Employee;
 import com.kalma.Patienten.Dossier.models.Patient;
+import com.kalma.Patienten.Dossier.models.Report;
 import com.kalma.Patienten.Dossier.repository.DossierRepository;
 import com.kalma.Patienten.Dossier.repository.PatientRepository;
 import org.springframework.stereotype.Service;
@@ -30,10 +32,12 @@ public class DossierService {
         dossierDto.dossierIsClosed = dossier.getDossierIsClosed();
 
         //link to patient
-        Patient patientById = patientRepository.findById(patientId).get();
-        if (patientById.getDossier() == null) {
-            patientById.setDossier(dossier);
-            patientRepository.save(patientById);
+        if(patientId != null) {
+            Patient patientById = patientRepository.findById(patientId).get();
+            if (patientById.getDossier() == null) {
+                patientById.setDossier(dossier);
+                patientRepository.save(patientById);
+            }
         }
 
         return dossierDto;
@@ -54,6 +58,13 @@ public class DossierService {
         return dossierRepository.findById(id);
     }
 
+    public List<Long> getReportIdList(Dossier dossier) {
+        List<Long> reportIdList = new ArrayList();
+        for(Report report : dossier.getReports()){
+            reportIdList.add(report.getId());
+        }
+        return reportIdList;
+    }
 
     //mapping functions
     public DossierDto dossierToDto(Dossier dossier) {
@@ -62,7 +73,9 @@ public class DossierService {
         dossierDto.id = dossier.getId();
         dossierDto.name = dossier.getName();
         dossierDto.dossierIsClosed = dossier.getDossierIsClosed();
-        dossierDto.reportIds = dossier.getReports();
+        if(dossier.getReports() != null) {
+            dossierDto.reportIds = getReportIdList(dossier);
+        }
 
         return dossierDto;
     }
@@ -73,7 +86,7 @@ public class DossierService {
         dossier.setId(dossierDto.id);
         dossier.setName(dossierDto.name);
         dossier.setDossierIsClosed(dossierDto.dossierIsClosed);
-        dossier.setReports(dossierDto.reportIds);
+//        dossier.setReports(dossierDto.reportIds);
 
         return dossier;
     }

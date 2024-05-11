@@ -1,7 +1,11 @@
 package com.kalma.Patienten.Dossier.Services;
 
+import com.kalma.Patienten.Dossier.dto.DossierDto;
 import com.kalma.Patienten.Dossier.dto.ReportDto;
+import com.kalma.Patienten.Dossier.models.Dossier;
+import com.kalma.Patienten.Dossier.models.Patient;
 import com.kalma.Patienten.Dossier.models.Report;
+import com.kalma.Patienten.Dossier.repository.DossierRepository;
 import com.kalma.Patienten.Dossier.repository.ReportRepository;
 import org.springframework.stereotype.Service;
 
@@ -12,9 +16,11 @@ import java.util.List;
 public class ReportService {
 
     private final ReportRepository reportRepository;
+    private final DossierRepository dossierRepository;
 
-    public ReportService(ReportRepository repository) {
+    public ReportService(ReportRepository repository, DossierRepository dossierRepository) {
         this.reportRepository = repository;
+        this.dossierRepository = dossierRepository;
     }
 
     public List<ReportDto> getAllReports() {
@@ -28,8 +34,27 @@ public class ReportService {
         return reportDtos;
     }
 
+    public ReportDto createReport(Long dossierId, ReportDto reportDto) {
+        Report report = dtoToReport(reportDto);
+        reportRepository.save(report);
 
-    //mapping functions
+        reportDto.id = report.getId();
+        reportDto.body = report.getBody();
+
+        //link to patient
+        if (dossierId != null) {
+            Dossier dossierById = dossierRepository.findById(dossierId).get();
+            if (dossierById.getReports() == null) {
+                report.setDossier(dossierById);
+                reportRepository.save(report);
+            }
+        }
+        return reportDto;
+    }
+
+
+
+        //mapping functions
     public Report dtoToReport(ReportDto reportDto) {
         Report report = new Report();
 

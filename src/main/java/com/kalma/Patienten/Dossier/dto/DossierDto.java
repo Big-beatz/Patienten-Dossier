@@ -15,7 +15,7 @@ public class DossierDto {
 
     public String name;
 
-    public List<Report> reportIds = new ArrayList<>();
+    public List<Long> reportIds = new ArrayList<>();
 
     public Long patientId;
 }

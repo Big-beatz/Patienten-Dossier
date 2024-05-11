@@ -21,14 +21,13 @@ public class PatientService {
 
     private final PatientRepository patientRepository;
     private final DossierService dossierService;
-    private final DossierRepository dossierRepository;
 
     public PatientService(PatientRepository repository, DossierService dossierService, DossierController dossierController, DossierRepository dossierRepository) {
     this.patientRepository = repository;
     this.dossierService = dossierService;
-        this.dossierRepository = dossierRepository;
     }
 
+    //todo can only be done by Secretary
     public PatientDto createPatient(PatientDto patientDto){
         Patient patient = dtoToPatient(patientDto);
         patientRepository.save(patient);
@@ -45,6 +44,7 @@ public class PatientService {
         return patientDto;
     }
 
+    //todo can only be done by Secretary
     public List<PatientDto> getAllPatients(){
         List<Patient> patients = patientRepository.findAll();
         List<PatientDto> patientDtos = new ArrayList<>();
@@ -68,14 +68,14 @@ public class PatientService {
     }
 
     //mapping functions
-    public Patient dtoToPatient(PatientDto dto){
+    public Patient dtoToPatient(PatientDto patientDto){
         Patient patient = new Patient();
 
-        patient.setFirstName(dto.firstName);
-        patient.setLastName(dto.lastName);
-        patient.setFullName(dto.firstName + " " + dto.lastName);
-        if(dto.dossierId != null) {
-            patient.setDossier(dossierService.getDossierById(dto.dossierId).get());
+        patient.setFirstName(patientDto.firstName);
+        patient.setLastName(patientDto.lastName);
+        patient.setFullName(patientDto.firstName + " " + patientDto.lastName);
+        if(patientDto.dossierId != null) {
+            patient.setDossier(dossierService.getDossierById(patientDto.dossierId).get());
         }
         return patient;
     }
