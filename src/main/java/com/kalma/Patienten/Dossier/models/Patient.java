@@ -11,7 +11,8 @@ public class Patient {
 
     //properties
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator ="patients_generator")
+    @SequenceGenerator(name ="patients_generator" , initialValue = 10, allocationSize = 10)
     private Long id;
 
     @Column(name="first_name", length = 128)

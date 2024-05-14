@@ -10,7 +10,8 @@ public class Report {
 
     //properties
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator ="reports_generator")
+    @SequenceGenerator(name ="reports_generator" , initialValue = 10, allocationSize = 10)
     private Long id;
 
     @Column(name="date")

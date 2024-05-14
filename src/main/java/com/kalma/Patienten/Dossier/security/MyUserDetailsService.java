@@ -1,9 +1,7 @@
 package com.kalma.Patienten.Dossier.security;
 
 import com.kalma.Patienten.Dossier.models.Employee;
-import com.kalma.Patienten.Dossier.models.User;
 import com.kalma.Patienten.Dossier.repository.EmployeeRepository;
-import com.kalma.Patienten.Dossier.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -18,14 +16,14 @@ public class MyUserDetailsService implements UserDetailsService {
         this.employeeRepository = repos;
     }
     @Override
-    public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-        Optional<Employee> optionalEmployee = employeeRepository.findByUserName(userName);
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Optional<Employee> optionalEmployee = employeeRepository.findByUsername(username);
         if (optionalEmployee.isPresent()) {
             Employee employee = optionalEmployee.get();
             return new MyUserDetails(employee);
         }
         else {
-            throw new UsernameNotFoundException(userName);
+            throw new UsernameNotFoundException(username);
         }
     }
 }

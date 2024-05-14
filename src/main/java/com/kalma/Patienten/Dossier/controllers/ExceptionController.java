@@ -2,10 +2,13 @@ package com.kalma.Patienten.Dossier.controllers;
 
 import com.kalma.Patienten.Dossier.exceptions.InputNotValidException;
 import com.kalma.Patienten.Dossier.exceptions.RecordNotFoundException;
+import com.kalma.Patienten.Dossier.exceptions.UsernameAlreadyExistsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import javax.naming.NameAlreadyBoundException;
 
 @ControllerAdvice
 public class ExceptionController {
@@ -18,4 +21,9 @@ public class ExceptionController {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(value = UsernameAlreadyExistsException.class)
+    public ResponseEntity<Object> usernameAlreadyExists(UsernameAlreadyExistsException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.CONFLICT);
+    }
 }
+

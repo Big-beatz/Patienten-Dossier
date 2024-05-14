@@ -2,6 +2,7 @@ package com.kalma.Patienten.Dossier.controllers;
 
 import com.kalma.Patienten.Dossier.Services.EmployeeService;
 import com.kalma.Patienten.Dossier.dto.EmployeeDto;
+import com.kalma.Patienten.Dossier.exceptions.UsernameAlreadyExistsException;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,8 +41,8 @@ public class EmployeeController {
                 sb.append("\n");
             }
             return ResponseEntity.badRequest().body(sb.toString());
-        } else {
-            //todo
+        }
+        else {
             employeeDto = employeeService.createEmployee(employeeDto);
 
             URI uri = URI.create(
@@ -51,7 +52,7 @@ public class EmployeeController {
                             toUriString()
             );
             return new ResponseEntity<>(employeeDto, HttpStatus.CREATED);
-        }
 
+        }
     }
 }

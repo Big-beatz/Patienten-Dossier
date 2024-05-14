@@ -2,7 +2,6 @@ package com.kalma.Patienten.Dossier.security;
 
 import com.kalma.Patienten.Dossier.models.Employee;
 import com.kalma.Patienten.Dossier.models.Role;
-import com.kalma.Patienten.Dossier.models.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -36,7 +35,7 @@ public class MyUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return employee.getUserName();
+        return employee.getUsername();
     }
 
     @Override

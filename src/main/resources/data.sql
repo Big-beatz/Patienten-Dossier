@@ -1,45 +1,48 @@
 --insert patients
 insert into patients(id, first_name, last_name, full_name)
 values
-    (nextval('patients_seq'), 'Peter', 'Pannenkoek', 'Peter Pannenkoek'),
-    (nextval('patients_seq'), 'Linda', 'de Mol', 'Linda de Mol'),
-    (nextval('patients_seq'), 'Lisa', 'Simpson', 'Lisa Simpson');
+    (nextval('patients_generator'), 'Peter', 'Pannenkoek', 'Peter Pannenkoek'),
+    (nextval('patients_generator'), 'Linda', 'de Mol', 'Linda de Mol'),
+    (nextval('patients_generator'), 'Lisa', 'Simpson', 'Lisa Simpson');
 
 --insert employees
--- todo: add encoded password and roles to start right away with getting data. Pietje.Puk as admin, the others as users
-insert into employees(id, first_name, last_name, user_name, function)
+insert into employees(id, first_name, last_name, username, function, password)
 values
-    (nextval('employees_seq'), 'Karim', 'Kendal', 'Karim.Kendal', 'Doctor'),
-    (nextval('employees_seq'), 'Mickey', 'Mouse', 'Mickey.Mouse', 'Doctor'),
-    (nextval('employees_seq'), 'Pietje', 'Puk', 'Pietje.Puk', 'Secretares');
+    (nextval('employees_generator'),
+     'Karim', 'Kendal', 'Karim.Kendal', 'Doctor',
+     '$2a$12$kFsPDPZX4zuoifPtXEvyCucB0Ric3F7gkgksA4f5HvNG0SMVECsFW'
+    ),
+    (nextval('employees_generator'), 'Mickey', 'Mouse', 'Mickey.Mouse', 'Doctor',
+     '$2a$12$VqnS8Ky0LnqXek1FGCzBEeF.Oj/TbCSR0eNPGmpwi37bPvHFM8Fny'
+    ),
+    (nextval('employees_generator'), 'Pietje', 'Puk', 'Pietje.Puk', 'Secretares',
+     '$2a$12$HY/pP/ojBKSk8t.xDdFpJeHugn4YQHbRIGRd8I8fnnNh407SIJNCe'
+    );
 
 --insert dossiers
 insert into dossiers(id, dossier_is_closed, name)
 values
-    (nextval('dossiers_seq'), 'false', 'Peter Pannenkoek'),
-    (nextval('dossiers_seq'), 'true', 'Linda de Mol'),
-    (nextval('dossiers_seq'), 'false', 'Lisa Simpson');
+    (nextval('dossiers_generator'), 'false', 'Peter Pannenkoek'),
+    (nextval('dossiers_generator'), 'true', 'Linda de Mol'),
+    (nextval('dossiers_generator'), 'false', 'Lisa Simpson');
 
 --insert reports
 insert into reports(id, body, date)
 values
     --Peter Pannenkoek
-    (nextval('reports_seq'), 'Hij maakt de hele tijd alleen maar grappen, hij ontwijkt zijn problemen.', '2023-01-01'),
-    (nextval('reports_seq'), 'Minder grappen vandaag, hij heeft wel een scheetkussen op mijn stoel gelegd.', '2023-01-08'),
-    (nextval('reports_seq'), 'Vandaag helemaal geen grappen, we zijn tot de kern gekomen. HIj is bijna klaar voor ontslag.', '2023-01-15'),
+    (nextval('reports_generator'), 'Hij maakt de hele tijd alleen maar grappen, hij ontwijkt zijn problemen.', '2023-01-01'),
+    (nextval('reports_generator'), 'Minder grappen vandaag, hij heeft wel een scheetkussen op mijn stoel gelegd.', '2023-01-08'),
+    (nextval('reports_generator'), 'Vandaag helemaal geen grappen, we zijn tot de kern gekomen. HIj is bijna klaar voor ontslag.', '2023-01-15'),
     --Linda de Mol
-    (nextval('reports_seq'), 'Eigenlijk was de verwijzing onterecht, ze hoeft niet meer terug te komen. Ik kan haar niet verder helpen.', '2022-02-15'),
+    (nextval('reports_generator'), 'Eigenlijk was de verwijzing onterecht, ze hoeft niet meer terug te komen. Ik kan haar niet verder helpen.', '2022-02-15'),
     --Lisa Simpson
-    (nextval('reports_seq'), 'Haalt veel troost uit haar saxofoon en rijkt uit naar de wereld doormiddels van links gedachtegoed te promoveren. Dit komt waarschijnlijk door de slechte band met haar vader. Verdere gesprekken nodig.', '2024-03-01'),
-    (nextval('reports_seq'), 'Heeft een moeilijke relatie met haar broer. Dit lijkt verband te hebben met jaloesie om de beroemdheid van Bart.', '2024-03-08');
+    (nextval('reports_generator'), 'Haalt veel troost uit haar saxofoon en rijkt uit naar de wereld doormiddels van links gedachtegoed te promoveren. Dit komt waarschijnlijk door de slechte band met haar vader. Verdere gesprekken nodig.', '2024-03-01'),
+    (nextval('reports_generator'), 'Heeft een moeilijke relatie met haar broer. Dit lijkt verband te hebben met jaloesie om de beroemdheid van Bart.', '2024-03-08');
 
+-- insert roles
 insert into roles(rolename)
 values ('ROLE_ADMIN'),
        ('ROLE_USER');
-
-insert into users(username, password)
-values ('Sysadmin', 'password');
-
 
 --link dossiers to patients
 update patients
@@ -59,7 +62,7 @@ update reports
 set employees_id = employees.id
 from employees
 where reports.date >= '2023-01-01' AND reports.date <= '2023-12-31'
-  AND employees.user_name = 'Mickey.Mouse';
+  AND employees.username = 'Mickey.Mouse';
 
 --link reports to dossier Linda de Mol
 update reports
@@ -73,7 +76,7 @@ update reports
 set employees_id = employees.id
 from employees
 where reports.date >= '2022-01-01' AND reports.date <= '2022-12-31'
-  AND employees.user_name = 'Karim.Kendal';
+  AND employees.username = 'Karim.Kendal';
 
 --link reports to dossier Lisa Simpson
 update reports
@@ -87,33 +90,47 @@ update reports
 set employees_id = employees.id
 from employees
 where reports.date >= '2024-01-01' AND reports.date <= '2024-12-31'
-  AND employees.user_name = 'Mickey.Mouse';
+  AND employees.username = 'Mickey.Mouse';
 
 --link patients and employees
 INSERT INTO employee_patients (patient_id, employee_id)
 VALUES
     (
         (SELECT id FROM patients WHERE full_name = 'Linda de Mol'),
-        (SELECT id FROM employees WHERE user_name = 'Pietje.Puk')
+        (SELECT id FROM employees WHERE username = 'Pietje.Puk')
     ),
     (
         (SELECT id FROM patients WHERE full_name = 'Peter Pannenkoek'),
-        (SELECT id FROM employees WHERE user_name = 'Pietje.Puk')
+        (SELECT id FROM employees WHERE username = 'Pietje.Puk')
     ),
     (
         (SELECT id FROM patients WHERE full_name = 'Lisa Simpson'),
-        (SELECT id FROM employees WHERE user_name = 'Pietje.Puk')
+        (SELECT id FROM employees WHERE username = 'Pietje.Puk')
     ),
     (
         (SELECT id FROM patients WHERE full_name = 'Linda de Mol'),
-        (SELECT id FROM employees WHERE user_name = 'Karim.Kendal')
+        (SELECT id FROM employees WHERE username = 'Karim.Kendal')
     ),
     (
         (SELECT id FROM patients WHERE full_name = 'Peter Pannenkoek'),
-        (SELECT id FROM employees WHERE user_name = 'Mickey.Mouse')
+        (SELECT id FROM employees WHERE username = 'Mickey.Mouse')
     ),
     (
         (SELECT id FROM patients WHERE full_name = 'Lisa Simpson'),
-        (SELECT id FROM employees WHERE user_name = 'Karim.Kendal')
+        (SELECT id FROM employees WHERE username = 'Karim.Kendal')
     );
 
+-- set roles
+INSERT INTO employees_roles(employees_id, roles_rolename)
+VALUES (
+        (SELECT id FROM employees WHERE username = 'Pietje.Puk'),
+        (SELECT rolename FROM roles WHERE rolename = 'ROLE_ADMIN')
+       ),
+       (
+       (SELECT id FROM employees WHERE username = 'Mickey.Mouse'),
+       (SELECT rolename FROM roles WHERE rolename = 'ROLE_USER')
+       ),
+       (
+       (SELECT id FROM employees WHERE username = 'Karim.Kendal'),
+       (SELECT rolename FROM roles WHERE rolename = 'ROLE_USER')
+       );

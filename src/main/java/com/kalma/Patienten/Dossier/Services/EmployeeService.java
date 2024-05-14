@@ -10,9 +10,13 @@ import com.kalma.Patienten.Dossier.repository.EmployeeRepository;
 import com.kalma.Patienten.Dossier.repository.PatientRepository;
 
 import com.kalma.Patienten.Dossier.repository.RoleRepository;
+import com.kalma.Patienten.Dossier.security.MyUserDetails;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +48,7 @@ public class EmployeeService {
         Employee employee = dtoToEmployee(employeeDto);
 
         employeeDto.id = employee.getId();
-        employeeDto.userName = employee.getUserName();
+        employeeDto.username = employee.getUsername();
         for (Long id : employeeDto.patientIds){
             Optional<Patient> optionalPatient = patientRepository.findById(id);
             if (optionalPatient.isPresent()) {
@@ -62,6 +66,11 @@ public class EmployeeService {
         }
 
         employeeRepository.save(employee);
+
+        //todo find a way to make this work.
+//        if(findEmployeeByUsername(employee.getUsername()) != null){
+//            throw new ResponseStatusException(HttpStatus.CONFLICT, "Username already exists");
+//        }
 
         return employeeDto;
     }
@@ -101,13 +110,22 @@ public class EmployeeService {
         employee.setId(dto.id);
         employee.setFirstName(dto.firstName);
         employee.setLastName(dto.lastName);
-        employee.setUserName(dto.firstName + "." + dto.lastName);
+        employee.setUsername(dto.firstName + "." + dto.lastName);
         employee.setFunction(dto.function);
         employee.setPassword(passwordEncoder.encode(dto.password));
 
         return employee;
     }
 
+    public Employee findEmployeeByUsername(String username) {
+        Optional<Employee> optionalEmployee = employeeRepository.findByUsername(username);
+        if (optionalEmployee.isPresent()) {
+            Employee employee = optionalEmployee.get();
+            return employee;
+        } else {
+            return null;
+        }
+    }
 
     public EmployeeDto employeeToDto(Employee employee) {
         EmployeeDto employeeDto = new EmployeeDto();
@@ -116,7 +134,7 @@ public class EmployeeService {
         employeeDto.firstName = employee.getFirstName();
         employeeDto.lastName = employee.getLastName();
         //todo this should be different
-        employeeDto.userName = employeeDto.firstName + "." + employeeDto.lastName;
+        employeeDto.username = employeeDto.firstName + "." + employeeDto.lastName;
         employeeDto.function = employee.getFunction();
 //        for(EmployeeDto employeeDto){
 //        employeeDto.roles = employee.getRoles();

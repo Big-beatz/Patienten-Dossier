@@ -1,19 +1,17 @@
 package com.kalma.Patienten.Dossier.models;
 
 import jakarta.persistence.*;
-import org.hibernate.annotations.LazyToOne;
-import org.hibernate.annotations.LazyToOneOption;
+
 
 import java.util.List;
-import java.util.Optional;
 
 @Entity
 @Table(name="dossiers")
 public class Dossier {
-
     //properties
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator ="dossiers_generator")
+    @SequenceGenerator(name ="dossiers_generator" , initialValue = 10, allocationSize = 10)
     private Long id;
 
     @Column(name="dossier_is_closed")

@@ -13,7 +13,8 @@ public class Employee {
     //properties
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator ="employees_generator")
+    @SequenceGenerator(name ="employees_generator" , initialValue = 10, allocationSize = 10)
     private Long id;
 
     @Column(name="first_name", length = 128)
@@ -37,8 +38,8 @@ public class Employee {
     List<Report> reports;
 
     //login & security relevant
-    @Column(name="user_name", length = 256)
-    private String userName;
+    @Column(name="username", length = 256)
+    private String username;
 
     private String password;
 
@@ -70,12 +71,12 @@ public class Employee {
         this.lastName = lastName;
     }
 
-    public String getUserName() {
-        return userName = firstName + "." + lastName;
+    public String getUsername() {
+        return username = firstName + "." + lastName;
     }
 
-    public void setUserName(String userName) {
-        this.userName = firstName + " " + lastName;
+    public void setUsername(String userName) {
+        this.username = firstName + " " + lastName;
     }
 
     public String getFunction() {

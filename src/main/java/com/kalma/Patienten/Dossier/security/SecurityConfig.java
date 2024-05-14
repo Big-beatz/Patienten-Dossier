@@ -1,7 +1,6 @@
 package com.kalma.Patienten.Dossier.security;
 
 import com.kalma.Patienten.Dossier.repository.EmployeeRepository;
-import com.kalma.Patienten.Dossier.repository.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -54,7 +53,6 @@ public class SecurityConfig  {
                         .requestMatchers(HttpMethod.POST, "/users").permitAll()
                         .requestMatchers(HttpMethod.POST, "/employees").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth").permitAll()
-//                        .requestMatchers("/employees").authenticated()
                         .requestMatchers("/patients").authenticated()
                         .requestMatchers("/dossiers").authenticated()
                         .requestMatchers("/reports").authenticated()

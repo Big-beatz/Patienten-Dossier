@@ -14,7 +14,7 @@ public class Role {
     private String rolename;
 
     @ManyToMany(mappedBy = "roles")
-    private Set<User> employees;
+    private Set<Employee> employees;
 
     public String getRolename() {
         return rolename;

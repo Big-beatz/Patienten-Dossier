@@ -1,5 +1,6 @@
 package com.kalma.Patienten.Dossier.security;
 
+import com.kalma.Patienten.Dossier.exceptions.UsernameAlreadyExistsException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
