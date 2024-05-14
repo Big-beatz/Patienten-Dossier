@@ -82,7 +82,7 @@ public class EmployeeService {
         employee.setFirstName(dto.firstName);
         employee.setLastName(dto.lastName);
         employee.setFullName(dto.firstName + " " + dto.lastName);
-        employee.setRole(dto.role);
+        employee.setFunction(dto.function);
         return employee;
     }
 
@@ -94,7 +94,7 @@ public class EmployeeService {
         employeeDto.firstName = employee.getFirstName();
         employeeDto.lastName = employee.getLastName();
         employeeDto.fullName = employeeDto.firstName + " " + employeeDto.lastName;
-        employeeDto.role = employee.getRole();
+        employeeDto.function = employee.getFunction().toString();
 
         employeeDto.patientIds = getPatientIdList(employee);
 

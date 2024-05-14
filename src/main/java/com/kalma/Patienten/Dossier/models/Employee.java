@@ -25,8 +25,8 @@ public class Employee {
     @Column(name="full_name", length = 256)
     private String fullName;
 
-    @Column(name="role", length = 128)
-    private String role;
+    @Column(name="function", length = 128)
+    private String function;
 
     @ManyToMany
     @JoinTable(
@@ -73,12 +73,12 @@ public class Employee {
         this.fullName = firstName + " " + lastName;
     }
 
-    public String getRole() {
-        return role;
+    public String getFunction() {
+        return function;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setFunction(String function) {
+        this.function = function;
     }
 
 

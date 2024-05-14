@@ -1,4 +1,3 @@
---Hier moet ik data invullen voor de eindopdracht zodat dit niet met lege data wordt ingestuurd.
 --insert patients
 insert into patients(id, first_name, last_name, full_name)
 values
@@ -7,7 +6,7 @@ values
     (nextval('patients_seq'), 'Lisa', 'Simpson', 'Lisa Simpson');
 
 --insert employees
-insert into employees(id, first_name, last_name, full_name, role)
+insert into employees(id, first_name, last_name, full_name, function)
 values
     (nextval('employees_seq'), 'Karim', 'Kendal', 'Karim Kendal', 'Doctor'),
     (nextval('employees_seq'), 'Mickey', 'Mouse', 'Mickey Mouse', 'Doctor'),
@@ -32,6 +31,13 @@ values
     --Lisa Simpson
     (nextval('reports_seq'), 'Haalt veel troost uit haar saxofoon en rijkt uit naar de wereld doormiddels van links gedachtegoed te promoveren. Dit komt waarschijnlijk door de slechte band met haar vader. Verdere gesprekken nodig.', '2024-03-01'),
     (nextval('reports_seq'), 'Heeft een moeilijke relatie met haar broer. Dit lijkt verband te hebben met jaloesie om de beroemdheid van Bart.', '2024-03-08');
+
+insert into roles(rolename)
+values ('ROLE_ADMIN'),
+       ('ROLE_USER');
+
+insert into users(username, password)
+values ('Sysadmin', 'password');
 
 
 --link dossiers to patients
@@ -108,4 +114,11 @@ VALUES
     (
         (SELECT id FROM patients WHERE full_name = 'Lisa Simpson'),
         (SELECT id FROM employees WHERE full_name = 'Karim Kendal')
+    );
+
+INSERT INTO users_roles (roles_rolename, users_username)
+VALUES
+    (
+        (SELECT rolename FROM roles WHERE rolename = 'ROLE_ADMIN'),
+        (SELECT username FROM users WHERE username = 'Sysadmin')
     );

@@ -16,7 +16,7 @@ public class EmployeeDto {
     public String fullName;
 
     @NotBlank
-    public String role;
+    public String function;
 
     public List<Long> patientIds = new ArrayList<>();
 

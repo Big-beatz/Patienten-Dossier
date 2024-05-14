@@ -2,6 +2,7 @@ package com.kalma.Patienten.Dossier.controllers;
 
 import com.kalma.Patienten.Dossier.Services.ReportService;
 import com.kalma.Patienten.Dossier.dto.ReportDto;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -12,7 +13,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/reports")
+@RequestMapping("reports")
 public class ReportController {
 
     private final ReportService reportService;
@@ -27,8 +28,8 @@ public class ReportController {
     }
 
     //todo add employee ID through authentication.
-    @PostMapping("/{dossierId}")
-    public ResponseEntity<Object> createReport(@RequestParam Long dossierId, @RequestBody ReportDto reportDto, BindingResult br){
+    @PostMapping
+    public ResponseEntity<Object> createReport(@Valid @RequestBody ReportDto reportDto, BindingResult br){
         if (br.hasFieldErrors()) {
             StringBuilder sb = new StringBuilder();
             for (FieldError fieldError : br.getFieldErrors()) {
@@ -39,7 +40,7 @@ public class ReportController {
             }
             return ResponseEntity.badRequest().body(sb.toString());
         } else {
-            reportDto = reportService.createReport(dossierId, reportDto);
+            reportDto = reportService.createReport(reportDto);
 
             URI uri = URI.create(
                     ServletUriComponentsBuilder.

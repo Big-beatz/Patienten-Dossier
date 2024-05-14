@@ -17,10 +17,12 @@ public class ReportService {
 
     private final ReportRepository reportRepository;
     private final DossierRepository dossierRepository;
+    private final DossierService dossierService;
 
-    public ReportService(ReportRepository repository, DossierRepository dossierRepository) {
+    public ReportService(ReportRepository repository, DossierRepository dossierRepository, DossierService dossierService) {
         this.reportRepository = repository;
         this.dossierRepository = dossierRepository;
+        this.dossierService = dossierService;
     }
 
     public List<ReportDto> getAllReports() {
@@ -34,16 +36,17 @@ public class ReportService {
         return reportDtos;
     }
 
-    public ReportDto createReport(Long dossierId, ReportDto reportDto) {
+    public ReportDto createReport(ReportDto reportDto) {
         Report report = dtoToReport(reportDto);
         reportRepository.save(report);
 
         reportDto.id = report.getId();
         reportDto.body = report.getBody();
+        reportDto.dossierId = report.getDossier().getId();
 
         //link to patient
-        if (dossierId != null) {
-            Dossier dossierById = dossierRepository.findById(dossierId).get();
+        if (reportDto.dossierId != null) {
+            Dossier dossierById = dossierRepository.findById(reportDto.dossierId).get();
             if (dossierById.getReports() == null) {
                 report.setDossier(dossierById);
                 reportRepository.save(report);
@@ -60,7 +63,9 @@ public class ReportService {
 
         report.setBody(reportDto.body);
         report.setDate(reportDto.date);
-
+        if(reportDto.dossierId != null) {
+            report.setDossier(dossierService.getDossierById(reportDto.dossierId).get());
+        }
         return report;
     }
 
