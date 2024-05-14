@@ -1,5 +1,6 @@
 package com.kalma.Patienten.Dossier.security;
 
+import com.kalma.Patienten.Dossier.repository.EmployeeRepository;
 import com.kalma.Patienten.Dossier.repository.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,11 +22,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig  {
 
     private final JwtService jwtService;
-    private final UserRepository userRepository;
+    private final EmployeeRepository employeeRepository;
 
-    public SecurityConfig(JwtService service, UserRepository userRepos) {
+    public SecurityConfig(JwtService service, EmployeeRepository employeeRepository) {
         this.jwtService = service;
-        this.userRepository = userRepos;
+        this.employeeRepository = employeeRepository;
     }
 
     @Bean
@@ -43,7 +44,7 @@ public class SecurityConfig  {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return new MyUserDetailsService(this.userRepository);
+        return new MyUserDetailsService(this.employeeRepository);
     }
 
     @Bean
@@ -51,8 +52,9 @@ public class SecurityConfig  {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/users").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/employees").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth").permitAll()
-                        .requestMatchers("/employees").authenticated()
+//                        .requestMatchers("/employees").authenticated()
                         .requestMatchers("/patients").authenticated()
                         .requestMatchers("/dossiers").authenticated()
                         .requestMatchers("/reports").authenticated()

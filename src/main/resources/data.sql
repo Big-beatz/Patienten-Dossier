@@ -6,11 +6,12 @@ values
     (nextval('patients_seq'), 'Lisa', 'Simpson', 'Lisa Simpson');
 
 --insert employees
-insert into employees(id, first_name, last_name, full_name, function)
+-- todo: add encoded password and roles to start right away with getting data. Pietje.Puk as admin, the others as users
+insert into employees(id, first_name, last_name, user_name, function)
 values
-    (nextval('employees_seq'), 'Karim', 'Kendal', 'Karim Kendal', 'Doctor'),
-    (nextval('employees_seq'), 'Mickey', 'Mouse', 'Mickey Mouse', 'Doctor'),
-    (nextval('employees_seq'), 'Pietje', 'Puk', 'Pietje Puk', 'Secretares');
+    (nextval('employees_seq'), 'Karim', 'Kendal', 'Karim.Kendal', 'Doctor'),
+    (nextval('employees_seq'), 'Mickey', 'Mouse', 'Mickey.Mouse', 'Doctor'),
+    (nextval('employees_seq'), 'Pietje', 'Puk', 'Pietje.Puk', 'Secretares');
 
 --insert dossiers
 insert into dossiers(id, dossier_is_closed, name)
@@ -58,7 +59,7 @@ update reports
 set employees_id = employees.id
 from employees
 where reports.date >= '2023-01-01' AND reports.date <= '2023-12-31'
-  AND employees.full_name = 'Mickey Mouse';
+  AND employees.user_name = 'Mickey.Mouse';
 
 --link reports to dossier Linda de Mol
 update reports
@@ -72,7 +73,7 @@ update reports
 set employees_id = employees.id
 from employees
 where reports.date >= '2022-01-01' AND reports.date <= '2022-12-31'
-  AND employees.full_name = 'Karim Kendal';
+  AND employees.user_name = 'Karim.Kendal';
 
 --link reports to dossier Lisa Simpson
 update reports
@@ -86,39 +87,33 @@ update reports
 set employees_id = employees.id
 from employees
 where reports.date >= '2024-01-01' AND reports.date <= '2024-12-31'
-  AND employees.full_name = 'Mickey Mouse';
+  AND employees.user_name = 'Mickey.Mouse';
 
 --link patients and employees
 INSERT INTO employee_patients (patient_id, employee_id)
 VALUES
     (
         (SELECT id FROM patients WHERE full_name = 'Linda de Mol'),
-        (SELECT id FROM employees WHERE full_name = 'Pietje Puk')
+        (SELECT id FROM employees WHERE user_name = 'Pietje.Puk')
     ),
     (
         (SELECT id FROM patients WHERE full_name = 'Peter Pannenkoek'),
-        (SELECT id FROM employees WHERE full_name = 'Pietje Puk')
+        (SELECT id FROM employees WHERE user_name = 'Pietje.Puk')
     ),
     (
         (SELECT id FROM patients WHERE full_name = 'Lisa Simpson'),
-        (SELECT id FROM employees WHERE full_name = 'Pietje Puk')
+        (SELECT id FROM employees WHERE user_name = 'Pietje.Puk')
     ),
     (
         (SELECT id FROM patients WHERE full_name = 'Linda de Mol'),
-        (SELECT id FROM employees WHERE full_name = 'Karim Kendal')
+        (SELECT id FROM employees WHERE user_name = 'Karim.Kendal')
     ),
     (
         (SELECT id FROM patients WHERE full_name = 'Peter Pannenkoek'),
-        (SELECT id FROM employees WHERE full_name = 'Mickey Mouse')
+        (SELECT id FROM employees WHERE user_name = 'Mickey.Mouse')
     ),
     (
         (SELECT id FROM patients WHERE full_name = 'Lisa Simpson'),
-        (SELECT id FROM employees WHERE full_name = 'Karim Kendal')
+        (SELECT id FROM employees WHERE user_name = 'Karim.Kendal')
     );
 
-INSERT INTO users_roles (roles_rolename, users_username)
-VALUES
-    (
-        (SELECT rolename FROM roles WHERE rolename = 'ROLE_ADMIN'),
-        (SELECT username FROM users WHERE username = 'Sysadmin')
-    );

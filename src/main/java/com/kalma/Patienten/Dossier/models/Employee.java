@@ -22,9 +22,6 @@ public class Employee {
     @Column(name="last_name", length = 128)
     private String lastName;
 
-    @Column(name="full_name", length = 256)
-    private String fullName;
-
     @Column(name="function", length = 128)
     private String function;
 
@@ -38,9 +35,17 @@ public class Employee {
 
     @OneToMany(mappedBy = "employee")
     List<Report> reports;
+
+    //login & security relevant
+    @Column(name="user_name", length = 256)
+    private String userName;
+
+    private String password;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    private Set<Role> roles = new HashSet<>();
+
     //getters & setters
-
-
     public Long getId() {
         return id;
     }
@@ -65,12 +70,12 @@ public class Employee {
         this.lastName = lastName;
     }
 
-    public String getFullName() {
-        return fullName = firstName + " " + lastName;
+    public String getUserName() {
+        return userName = firstName + "." + lastName;
     }
 
-    public void setFullName(String fullName) {
-        this.fullName = firstName + " " + lastName;
+    public void setUserName(String userName) {
+        this.userName = firstName + " " + lastName;
     }
 
     public String getFunction() {
@@ -97,5 +102,17 @@ public class Employee {
 
     public void setReports(List<Report> reports) {
         this.reports = reports;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
     }
 }

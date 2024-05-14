@@ -1,5 +1,6 @@
 package com.kalma.Patienten.Dossier.security;
 
+import com.kalma.Patienten.Dossier.models.Employee;
 import com.kalma.Patienten.Dossier.models.Role;
 import com.kalma.Patienten.Dossier.models.User;
 import org.springframework.security.core.GrantedAuthority;
@@ -12,16 +13,16 @@ import java.util.List;
 
 public class MyUserDetails implements UserDetails {
 
-    private final User user;
+    private final Employee employee;
 
-    public MyUserDetails(User user) {
-        this.user = user;
+    public MyUserDetails(Employee employee) {
+        this.employee = employee;
     }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
 
-        for (Role role : user.getRoles()) {
+        for (Role role : employee.getRoles()) {
             authorities.add(new SimpleGrantedAuthority(role.getRolename()));
         }
 
@@ -30,12 +31,12 @@ public class MyUserDetails implements UserDetails {
 
     @Override
     public String getPassword() {
-        return user.getPassword();
+        return employee.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return user.getUsername();
+        return employee.getUserName();
     }
 
     @Override

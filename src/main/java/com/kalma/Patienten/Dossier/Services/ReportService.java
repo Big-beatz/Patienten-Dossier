@@ -1,9 +1,7 @@
 package com.kalma.Patienten.Dossier.Services;
 
-import com.kalma.Patienten.Dossier.dto.DossierDto;
 import com.kalma.Patienten.Dossier.dto.ReportDto;
 import com.kalma.Patienten.Dossier.models.Dossier;
-import com.kalma.Patienten.Dossier.models.Patient;
 import com.kalma.Patienten.Dossier.models.Report;
 import com.kalma.Patienten.Dossier.repository.DossierRepository;
 import com.kalma.Patienten.Dossier.repository.ReportRepository;

@@ -8,16 +8,21 @@ import java.util.List;
 public class EmployeeDto {
     public Long id;
 
+    @NotBlank
     public String firstName;
 
     @NotBlank
     public String lastName;
 
-    public String fullName;
-
     @NotBlank
     public String function;
 
+    public String userName;
+
+    @NotBlank
+    public String password;
+
     public List<Long> patientIds = new ArrayList<>();
 
+    public String[] roles;
 }

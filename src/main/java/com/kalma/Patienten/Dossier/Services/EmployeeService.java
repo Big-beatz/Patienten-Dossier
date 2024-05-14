@@ -5,10 +5,13 @@ import com.kalma.Patienten.Dossier.dto.EmployeeDto;
 import com.kalma.Patienten.Dossier.dto.PatientDto;
 import com.kalma.Patienten.Dossier.models.Employee;
 import com.kalma.Patienten.Dossier.models.Patient;
+import com.kalma.Patienten.Dossier.models.Role;
 import com.kalma.Patienten.Dossier.repository.EmployeeRepository;
 import com.kalma.Patienten.Dossier.repository.PatientRepository;
 
+import com.kalma.Patienten.Dossier.repository.RoleRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -22,27 +25,44 @@ public class EmployeeService {
     private final EmployeeRepository employeeRepository;
     private final PatientRepository patientRepository;
     private final PatientService patientService;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public EmployeeService(EmployeeRepository repository, PatientRepository patientRepository, PatientService patientService) {
+    public EmployeeService(EmployeeRepository repository,
+                           PatientRepository patientRepository,
+                           PatientService patientService,
+                           RoleRepository roleRepository,
+                           PasswordEncoder passwordEncoder) {
         this.employeeRepository = repository;
         this.patientRepository = patientRepository;
         this.patientService = patientService;
+        this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public EmployeeDto createEmployee(EmployeeDto employeeDto) {
         Employee employee = dtoToEmployee(employeeDto);
-        employeeRepository.save(employee);
 
         employeeDto.id = employee.getId();
-        employeeDto.fullName = employee.getFullName();
+        employeeDto.userName = employee.getUserName();
         for (Long id : employeeDto.patientIds){
             Optional<Patient> optionalPatient = patientRepository.findById(id);
             if (optionalPatient.isPresent()) {
                 Patient patient = optionalPatient.get();
                 employee.getPatients().add(patient);
             }
-            employeeRepository.save(employee);
         }
+
+        Set<Role> employeeRoles = employee.getRoles();
+        for (String rolename : employeeDto.roles) {
+            Optional<Role> optionalRole = roleRepository.findById("ROLE_" + rolename);
+            if (optionalRole.isPresent()) {
+                employeeRoles.add(optionalRole.get());
+            }
+        }
+
+        employeeRepository.save(employee);
+
         return employeeDto;
     }
 
@@ -81,8 +101,10 @@ public class EmployeeService {
         employee.setId(dto.id);
         employee.setFirstName(dto.firstName);
         employee.setLastName(dto.lastName);
-        employee.setFullName(dto.firstName + " " + dto.lastName);
+        employee.setUserName(dto.firstName + "." + dto.lastName);
         employee.setFunction(dto.function);
+        employee.setPassword(passwordEncoder.encode(dto.password));
+
         return employee;
     }
 
@@ -93,9 +115,12 @@ public class EmployeeService {
         employeeDto.id = employee.getId();
         employeeDto.firstName = employee.getFirstName();
         employeeDto.lastName = employee.getLastName();
-        employeeDto.fullName = employeeDto.firstName + " " + employeeDto.lastName;
-        employeeDto.function = employee.getFunction().toString();
-
+        //todo this should be different
+        employeeDto.userName = employeeDto.firstName + "." + employeeDto.lastName;
+        employeeDto.function = employee.getFunction();
+//        for(EmployeeDto employeeDto){
+//        employeeDto.roles = employee.getRoles();
+//         }
         employeeDto.patientIds = getPatientIdList(employee);
 
         return employeeDto;
