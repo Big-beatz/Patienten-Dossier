@@ -133,9 +133,6 @@ public class EmployeeService {
         employeeDto.lastName = employee.getLastName();
         employeeDto.username = employeeDto.firstName + "." + employeeDto.lastName;
         employeeDto.function = employee.getFunction();
-//        for(EmployeeDto employeeDto){
-//        employeeDto.roles = employee.getRoles();
-//         }
         employeeDto.patientIds = getPatientIdList(employee);
 
         return employeeDto;
