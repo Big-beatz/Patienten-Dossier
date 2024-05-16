@@ -2,7 +2,7 @@ package com.kalma.Patienten.Dossier.Services;
 
 
 import com.kalma.Patienten.Dossier.dto.EmployeeDto;
-import com.kalma.Patienten.Dossier.dto.PatientDto;
+import com.kalma.Patienten.Dossier.exceptions.UsernameAlreadyExistsException;
 import com.kalma.Patienten.Dossier.models.Employee;
 import com.kalma.Patienten.Dossier.models.Patient;
 import com.kalma.Patienten.Dossier.models.Role;
@@ -10,8 +10,8 @@ import com.kalma.Patienten.Dossier.repository.EmployeeRepository;
 import com.kalma.Patienten.Dossier.repository.PatientRepository;
 
 import com.kalma.Patienten.Dossier.repository.RoleRepository;
-import com.kalma.Patienten.Dossier.security.MyUserDetails;
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -47,8 +47,6 @@ public class EmployeeService {
     public EmployeeDto createEmployee(EmployeeDto employeeDto) {
         Employee employee = dtoToEmployee(employeeDto);
 
-        employeeDto.id = employee.getId();
-        employeeDto.username = employee.getUsername();
         for (Long id : employeeDto.patientIds){
             Optional<Patient> optionalPatient = patientRepository.findById(id);
             if (optionalPatient.isPresent()) {
@@ -65,12 +63,13 @@ public class EmployeeService {
             }
         }
 
+        checkIfUserNameExists(employeeDto.firstName + "." + employeeDto.lastName);
+
         employeeRepository.save(employee);
 
-        //todo find a way to make this work.
-//        if(findEmployeeByUsername(employee.getUsername()) != null){
-//            throw new ResponseStatusException(HttpStatus.CONFLICT, "Username already exists");
-//        }
+        employeeDto.id = employee.getId();
+        employeeDto.username = employee.getUsername();
+
 
         return employeeDto;
     }
@@ -117,13 +116,12 @@ public class EmployeeService {
         return employee;
     }
 
-    public Employee findEmployeeByUsername(String username) {
+    public void checkIfUserNameExists(String username) throws UsernameAlreadyExistsException {
         Optional<Employee> optionalEmployee = employeeRepository.findByUsername(username);
         if (optionalEmployee.isPresent()) {
-            Employee employee = optionalEmployee.get();
-            return employee;
-        } else {
-            return null;
+//            Employee employee = optionalEmployee.get();
+            throw new UsernameAlreadyExistsException("Username " + username + " already exists");
+//            return employee;
         }
     }
 
@@ -133,7 +131,6 @@ public class EmployeeService {
         employeeDto.id = employee.getId();
         employeeDto.firstName = employee.getFirstName();
         employeeDto.lastName = employee.getLastName();
-        //todo this should be different
         employeeDto.username = employeeDto.firstName + "." + employeeDto.lastName;
         employeeDto.function = employee.getFunction();
 //        for(EmployeeDto employeeDto){
