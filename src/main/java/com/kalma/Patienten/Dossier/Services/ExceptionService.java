@@ -15,7 +15,6 @@ public class ExceptionService {
         throw new UsernameAlreadyExistsException("Username " + username + " already exists");
     }
 
-
     public void InputNotValidException(String message) throws InputNotValidException {
         throw new InputNotValidException(message);
     }
