@@ -26,8 +26,4 @@ public class ExceptionService {
     public void AddingReportNotAllowedException(String message) throws AddingReportNotAllowedException {
         throw new AddingReportNotAllowedException(message);
     }
-
-
-
-
 }
