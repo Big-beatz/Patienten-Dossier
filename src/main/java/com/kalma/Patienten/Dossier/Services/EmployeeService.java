@@ -1,15 +1,11 @@
 package com.kalma.Patienten.Dossier.Services;
 
 
-import com.kalma.Patienten.Dossier.controllers.ExceptionController;
 import com.kalma.Patienten.Dossier.dto.EmployeeDto;
-import com.kalma.Patienten.Dossier.exceptions.InputNotValidException;
-import com.kalma.Patienten.Dossier.exceptions.UsernameAlreadyExistsException;
 import com.kalma.Patienten.Dossier.models.Employee;
 import com.kalma.Patienten.Dossier.models.Patient;
 import com.kalma.Patienten.Dossier.models.Role;
 import com.kalma.Patienten.Dossier.repository.EmployeeRepository;
-import com.kalma.Patienten.Dossier.repository.PatientRepository;
 
 import com.kalma.Patienten.Dossier.repository.RoleRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -23,53 +19,69 @@ import java.util.*;
 @Slf4j
 public class EmployeeService {
     private final EmployeeRepository employeeRepository;
-    private final PatientRepository patientRepository;
-    private final PatientService patientService;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
-    private final ExceptionController exceptionController;
+    private final ExceptionService exceptionService;
 
     public EmployeeService(EmployeeRepository repository,
-                           PatientRepository patientRepository,
-                           PatientService patientService,
                            RoleRepository roleRepository,
-                           PasswordEncoder passwordEncoder, ExceptionController exceptionController) {
+                           PasswordEncoder passwordEncoder,
+                           ExceptionService exceptionService) {
         this.employeeRepository = repository;
-        this.patientRepository = patientRepository;
-        this.patientService = patientService;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
-        this.exceptionController = exceptionController;
+        this.exceptionService = exceptionService;
     }
 
+    public String doctor = "doctor";
+    private String secretary = "secretary";
+
     public EmployeeDto createEmployee(EmployeeDto employeeDto) {
-        Employee employee = dtoToEmployee(employeeDto);
+        //check if function is allowed
+        if (employeeDto.function.equalsIgnoreCase(doctor) || employeeDto.function.equalsIgnoreCase(secretary)) {
+            Employee employee = dtoToEmployee(employeeDto);
 
-        //check if role is valid
-        boolean allRolesExist = employeeDto.roles.stream()
-                .allMatch(roleRepository::existsByRolename);
-        Set<Role> employeeRoles = employee.getRoles();
+            //check if role is valid
+            boolean allRolesExist = employeeDto.roles.stream()
+                    .allMatch(roleRepository::existsByRolename);
+            Set<Role> employeeRoles = employee.getRoles();
 
-        if (allRolesExist) {
-            for (String rolename : employeeDto.roles) {
-                Optional<Role> optionalRole = roleRepository.findById(rolename);
-                optionalRole.ifPresent(employeeRoles::add);
+            if (allRolesExist) {
+                for (String rolename : employeeDto.roles) {
+                    Optional<Role> optionalRole = roleRepository.findById(rolename);
+                    optionalRole.ifPresent(employeeRoles::add);
+                }
+            } else {
+                exceptionService.InputNotValidException("Role doesn't exist, valid values are: ROLE_USER, ROLE_ADMIN");
             }
-        } else {
-            throwInputNotValidException("Role doesn't exist, valid inputs are: ROLE_USER, ROLE_ADMIN");
+
+            checkIfUserNameExists(employeeDto.firstName + "." + employeeDto.lastName);
+
+            employeeRepository.save(employee);
+
+            employeeDto.id = employee.getId();
+            employeeDto.username = employee.getUsername();
+            employeeDto.password = employee.getPassword();
+
         }
-
-        checkIfUserNameExists(employeeDto.firstName + "." + employeeDto.lastName);
-
-        employeeRepository.save(employee);
-
-        employeeDto.id = employee.getId();
-        employeeDto.username = employee.getUsername();
-
-
+        else{
+            exceptionService.InputNotValidException("Function is not accepted, valid values are: " + doctor + ", " + secretary);
+        }
         return employeeDto;
     }
 
+    public void checkIfUserNameExists(String username) {
+        Optional<Employee> optionalEmployee = employeeRepository.findEmployeeByUsername(username);
+        if (optionalEmployee.isPresent()) {
+            exceptionService.UsernameAlreadyExistsException(username);
+        }
+    }
+
+    public void checkIfUserIsSecretary(Employee employee) {
+            if(!employee.getFunction().equalsIgnoreCase(secretary)) {
+                exceptionService.InvalidFunctionException("User is not a " + secretary);
+            }
+    }
 
     public List<EmployeeDto> getAllEmployees() {
         List<Employee> employees = employeeRepository.findAll();
@@ -91,13 +103,21 @@ public class EmployeeService {
 
     public List<Long> getPatientIdList(Employee employee) {
         List<Long> patientsIdList = new ArrayList();
-        log.info(employee.getPatients().toString());
         for(Patient patient : employee.getPatients()){
             patientsIdList.add(patient.getId());
         }
         return patientsIdList;
     }
 
+
+
+
+    public void checkIfEmployeeExists(String username) {
+        Optional<Employee> optionalEmployee = employeeRepository.findEmployeeByUsername(username);
+        if (optionalEmployee.isEmpty()) {
+            exceptionService.RecordNotFoundException("Employee not found");
+        }
+    }
 
     //mapping functions
     public Employee dtoToEmployee(EmployeeDto dto) {
@@ -111,17 +131,6 @@ public class EmployeeService {
         employee.setPassword(passwordEncoder.encode(dto.password));
 
         return employee;
-    }
-
-    public void throwInputNotValidException(String message) throws InputNotValidException {
-        throw new InputNotValidException(message);
-    }
-
-    public void checkIfUserNameExists(String username) throws UsernameAlreadyExistsException {
-        Optional<Employee> optionalEmployee = employeeRepository.findEmployeeByUsername(username);
-        if (optionalEmployee.isPresent()) {
-            throw new UsernameAlreadyExistsException("Username " + username + " already exists");
-        }
     }
 
     public EmployeeDto employeeToDto(Employee employee) {

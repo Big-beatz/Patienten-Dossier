@@ -1,6 +1,7 @@
 package com.kalma.Patienten.Dossier.controllers;
 
 import com.kalma.Patienten.Dossier.Services.DossierService;
+import com.kalma.Patienten.Dossier.Services.ExceptionService;
 import com.kalma.Patienten.Dossier.Services.PatientService;
 import com.kalma.Patienten.Dossier.dto.PatientDto;
 import com.kalma.Patienten.Dossier.models.Employee;
@@ -28,18 +29,14 @@ public class PatientController {
 
 
     private final PatientService patientService;
-    private final DossierService dossierService;
-    private final PatientRepository patientRepository;
-    private final EmployeeRepository employeeRepository;
+    private final ExceptionService exceptionService;
 
-    public PatientController(PatientService patientService, DossierService dossierService, PatientRepository patientRepository, EmployeeRepository employeeRepository) {
+    public PatientController(PatientService patientService,
+                             ExceptionService exceptionService) {
         this.patientService = patientService;
-        this.dossierService = dossierService;
-        this.patientRepository = patientRepository;
-        this.employeeRepository = employeeRepository;
+        this.exceptionService = exceptionService;
     }
 
-    ;
 
     @GetMapping
     public ResponseEntity<List<PatientDto>> getAllPatients() {
@@ -62,7 +59,7 @@ public class PatientController {
 //    }
 
     @PostMapping
-    public ResponseEntity<Object> createPatient(@Valid @RequestBody PatientDto patientDto, BindingResult br) {
+    public ResponseEntity<Object> createPatient(@Valid @RequestBody PatientDto patientDto, @RequestHeader("Authorization") String token, BindingResult br) {
 
         if (br.hasFieldErrors()) {
             StringBuilder sb = new StringBuilder();
@@ -74,7 +71,7 @@ public class PatientController {
             }
             return ResponseEntity.badRequest().body(sb.toString());
         } else {
-            patientDto = patientService.createPatient(patientDto);
+            patientDto = patientService.createPatient(patientDto, token);
 
             URI uri = URI.create(
                     ServletUriComponentsBuilder.
@@ -89,49 +86,35 @@ public class PatientController {
     @PutMapping("/appointment")
     public ResponseEntity<Object> putNextAppointment(
             @Valid
-            @RequestParam("nextAppointment")String nextAppointmentString,
+            @RequestParam("nextAppointment") String nextAppointmentString,
             @RequestParam("patientId") Long patientId,
-            @RequestParam("employeeUsername") String employeeUsername) {
-        LocalDate nextAppointment;
+            @RequestParam("employeeUsername") String employeeUsername)
+    {
+        LocalDate nextAppointment = null;
+
         try {
             nextAppointment = LocalDate.parse(nextAppointmentString);
         } catch (DateTimeParseException exception) {
-            return ResponseEntity.badRequest().
-                    body("Invalid date format for nextAppointment. Expected format: YYYY-MM-DD");
+            exceptionService.InputNotValidException("Date should be formated YYYY-mm-dd");
         }
-
-        // Additional validation logic can be added here
         if (patientId == null || patientId <= 0) {
-            return ResponseEntity.badRequest().body("Invalid patientId");
+            exceptionService.InputNotValidException("Invalid patientId");
         }
 
         if (employeeUsername == null || employeeUsername.isEmpty()) {
-            return ResponseEntity.badRequest().body("Invalid employeeUsername");
-        }
-        else {
+            exceptionService.InputNotValidException("Invalid employeeUsername");
+        } else {
+
             //set appointment
-            Patient patient = patientRepository.findPatientById(patientId);
-            patient.setNextAppointment(nextAppointment);
-
-            //setEmployee
-            Optional<Employee> optionalEmployee = employeeRepository.findEmployeeByUsername(employeeUsername);
-            if (optionalEmployee.isEmpty()) {
-                return ResponseEntity.badRequest().body("Employee not found");
-            }
-
-            Employee employee = optionalEmployee.get();
-            Set<Employee> employees = patient.getEmployees();
-
-            //check if link between patient and employee exists if not make the link
-            boolean employeeAndPatientLinkExists = employees.stream().anyMatch(e -> e.getId().equals(employee.getId()));
-            if(!employeeAndPatientLinkExists) {
-                employees.add(employee);
-                patient.setEmployees(employees);
-            }
-
-            patientRepository.save(patient);
-
-            return ResponseEntity.ok("Next Appointment on " + nextAppointmentString + " with " + employeeUsername);
+            String appointmentConfirmed = patientService.setNextAppointment(
+                    nextAppointmentString,
+                    patientId,
+                    employeeUsername,
+                    nextAppointment
+            );
+            return ResponseEntity.ok(appointmentConfirmed);
         }
+        return null;
     }
 }
+

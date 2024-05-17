@@ -15,7 +15,7 @@ values
     (nextval('employees_generator'), 'Mickey', 'Mouse', 'Mickey.Mouse', 'Doctor',
      '$2a$12$VqnS8Ky0LnqXek1FGCzBEeF.Oj/TbCSR0eNPGmpwi37bPvHFM8Fny'
     ),
-    (nextval('employees_generator'), 'Pietje', 'Puk', 'Pietje.Puk', 'Secretares',
+    (nextval('employees_generator'), 'Pietje', 'Puk', 'Pietje.Puk', 'Secretary',
      '$2a$12$HY/pP/ojBKSk8t.xDdFpJeHugn4YQHbRIGRd8I8fnnNh407SIJNCe'
     );
 
