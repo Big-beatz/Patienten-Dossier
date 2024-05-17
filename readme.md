@@ -24,7 +24,7 @@ Reports - endpoint / reports
 Patients - endpoint / patients
 patients by employee employees/patientid
 
-patient - next appointment - /patients{id}/{nextAppointment}
+patient - next appointment - /patients/appointment
 
 
 
@@ -32,6 +32,9 @@ patient - next appointment - /patients{id}/{nextAppointment}
 
 Dossier - isDossierClosed /dossiers{id}/{isDossierClosed}
 *reports can't be added when dossier is closed*
+
+patient - set next appointment - /patients/appointment
+*add the keys:String nextAppointment, Long patientId, String employeeUsername*
 
 ### Delete
 Employee By username /employees{username}

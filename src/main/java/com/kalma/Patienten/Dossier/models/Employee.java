@@ -76,7 +76,7 @@ public class Employee {
     }
 
     public void setUsername(String userName) {
-        this.username = firstName + " " + lastName;
+        this.username = firstName + "." + lastName;
     }
 
     public String getFunction() {

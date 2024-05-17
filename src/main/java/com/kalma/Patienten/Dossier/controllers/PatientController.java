@@ -114,8 +114,8 @@ public class PatientController {
             patient.setNextAppointment(nextAppointment);
 
             //setEmployee
-            Optional<Employee> optionalEmployee = employeeRepository.findByUsername(employeeUsername);
-            if (!optionalEmployee.isPresent()) {
+            Optional<Employee> optionalEmployee = employeeRepository.findEmployeeByUsername(employeeUsername);
+            if (optionalEmployee.isEmpty()) {
                 return ResponseEntity.badRequest().body("Employee not found");
             }
 

@@ -1,7 +1,9 @@
 package com.kalma.Patienten.Dossier.Services;
 
 
+import com.kalma.Patienten.Dossier.controllers.ExceptionController;
 import com.kalma.Patienten.Dossier.dto.EmployeeDto;
+import com.kalma.Patienten.Dossier.exceptions.InputNotValidException;
 import com.kalma.Patienten.Dossier.exceptions.UsernameAlreadyExistsException;
 import com.kalma.Patienten.Dossier.models.Employee;
 import com.kalma.Patienten.Dossier.models.Patient;
@@ -15,10 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -28,34 +27,36 @@ public class EmployeeService {
     private final PatientService patientService;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ExceptionController exceptionController;
 
     public EmployeeService(EmployeeRepository repository,
                            PatientRepository patientRepository,
                            PatientService patientService,
                            RoleRepository roleRepository,
-                           PasswordEncoder passwordEncoder) {
+                           PasswordEncoder passwordEncoder, ExceptionController exceptionController) {
         this.employeeRepository = repository;
         this.patientRepository = patientRepository;
         this.patientService = patientService;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
+        this.exceptionController = exceptionController;
     }
 
     public EmployeeDto createEmployee(EmployeeDto employeeDto) {
         Employee employee = dtoToEmployee(employeeDto);
 
-        for (Long id : employeeDto.patientIds){
-            Optional<Patient> optionalPatient = patientRepository.findById(id);
-            if (optionalPatient.isPresent()) {
-                Patient patient = optionalPatient.get();
-                employee.getPatients().add(patient);
-            }
-        }
-
+        //check if role is valid
+        boolean allRolesExist = employeeDto.roles.stream()
+                .allMatch(roleRepository::existsByRolename);
         Set<Role> employeeRoles = employee.getRoles();
-        for (String rolename : employeeDto.roles) {
-            Optional<Role> optionalRole = roleRepository.findById("ROLE_" + rolename);
-            optionalRole.ifPresent(employeeRoles::add);
+
+        if (allRolesExist) {
+            for (String rolename : employeeDto.roles) {
+                Optional<Role> optionalRole = roleRepository.findById(rolename);
+                optionalRole.ifPresent(employeeRoles::add);
+            }
+        } else {
+            throwInputNotValidException("Role doesn't exist, valid inputs are: ROLE_USER, ROLE_ADMIN");
         }
 
         checkIfUserNameExists(employeeDto.firstName + "." + employeeDto.lastName);
@@ -68,6 +69,7 @@ public class EmployeeService {
 
         return employeeDto;
     }
+
 
     public List<EmployeeDto> getAllEmployees() {
         List<Employee> employees = employeeRepository.findAll();
@@ -111,8 +113,12 @@ public class EmployeeService {
         return employee;
     }
 
+    public void throwInputNotValidException(String message) throws InputNotValidException {
+        throw new InputNotValidException(message);
+    }
+
     public void checkIfUserNameExists(String username) throws UsernameAlreadyExistsException {
-        Optional<Employee> optionalEmployee = employeeRepository.findByUsername(username);
+        Optional<Employee> optionalEmployee = employeeRepository.findEmployeeByUsername(username);
         if (optionalEmployee.isPresent()) {
             throw new UsernameAlreadyExistsException("Username " + username + " already exists");
         }
@@ -124,9 +130,9 @@ public class EmployeeService {
         employeeDto.id = employee.getId();
         employeeDto.firstName = employee.getFirstName();
         employeeDto.lastName = employee.getLastName();
-        employeeDto.username = employeeDto.firstName + "." + employeeDto.lastName;
+        employeeDto.username = employee.getUsername();
         employeeDto.function = employee.getFunction();
-        employeeDto.patientIds = getPatientIdList(employee);
+        employeeDto.password = employee.getPassword();
 
         return employeeDto;
     }
