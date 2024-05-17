@@ -1,9 +1,9 @@
 --insert patients
-insert into patients(id, first_name, last_name, full_name)
+insert into patients(id, first_name, last_name, full_name, next_appointment)
 values
-    (nextval('patients_generator'), 'Peter', 'Pannenkoek', 'Peter Pannenkoek'),
-    (nextval('patients_generator'), 'Linda', 'de Mol', 'Linda de Mol'),
-    (nextval('patients_generator'), 'Lisa', 'Simpson', 'Lisa Simpson');
+    (nextval('patients_generator'), 'Peter', 'Pannenkoek', 'Peter Pannenkoek', '2024-01-10'),
+    (nextval('patients_generator'), 'Linda', 'de Mol', 'Linda de Mol', null),
+    (nextval('patients_generator'), 'Lisa', 'Simpson', 'Lisa Simpson', '2024-04-05');
 
 --insert employees
 insert into employees(id, first_name, last_name, username, function, password)

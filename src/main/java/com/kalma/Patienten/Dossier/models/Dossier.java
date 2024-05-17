@@ -11,7 +11,7 @@ public class Dossier {
     //properties
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator ="dossiers_generator")
-    @SequenceGenerator(name ="dossiers_generator" , initialValue = 10, allocationSize = 10)
+    @SequenceGenerator(name ="dossiers_generator" , allocationSize = 1)
     private Long id;
 
     @Column(name="dossier_is_closed")

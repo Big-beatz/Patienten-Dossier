@@ -10,11 +10,11 @@ import java.util.Set;
 @Entity
 @Table(name="employees")
 public class Employee {
-    //properties
 
+    //properties
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator ="employees_generator")
-    @SequenceGenerator(name ="employees_generator" , initialValue = 10, allocationSize = 10)
+    @SequenceGenerator(name ="employees_generator" , allocationSize = 1)
     private Long id;
 
     @Column(name="first_name", length = 128)

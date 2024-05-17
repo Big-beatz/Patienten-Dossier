@@ -12,11 +12,8 @@ import com.kalma.Patienten.Dossier.repository.PatientRepository;
 import com.kalma.Patienten.Dossier.repository.RoleRepository;
 import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,9 +55,7 @@ public class EmployeeService {
         Set<Role> employeeRoles = employee.getRoles();
         for (String rolename : employeeDto.roles) {
             Optional<Role> optionalRole = roleRepository.findById("ROLE_" + rolename);
-            if (optionalRole.isPresent()) {
-                employeeRoles.add(optionalRole.get());
-            }
+            optionalRole.ifPresent(employeeRoles::add);
         }
 
         checkIfUserNameExists(employeeDto.firstName + "." + employeeDto.lastName);
@@ -119,9 +114,7 @@ public class EmployeeService {
     public void checkIfUserNameExists(String username) throws UsernameAlreadyExistsException {
         Optional<Employee> optionalEmployee = employeeRepository.findByUsername(username);
         if (optionalEmployee.isPresent()) {
-//            Employee employee = optionalEmployee.get();
             throw new UsernameAlreadyExistsException("Username " + username + " already exists");
-//            return employee;
         }
     }
 

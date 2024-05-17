@@ -58,6 +58,10 @@ public class DossierService {
         return dossierRepository.findById(id);
     }
 
+    public Dossier getDossierByName(String name) {
+        return dossierRepository.findByName(name);
+    }
+
     public List<Long> getReportIdList(Dossier dossier) {
         List<Long> reportIdList = new ArrayList();
         for(Report report : dossier.getReports()){

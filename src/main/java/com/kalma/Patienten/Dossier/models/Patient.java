@@ -2,6 +2,7 @@ package com.kalma.Patienten.Dossier.models;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -12,7 +13,7 @@ public class Patient {
     //properties
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator ="patients_generator")
-    @SequenceGenerator(name ="patients_generator" , initialValue = 10, allocationSize = 10)
+    @SequenceGenerator(name ="patients_generator" , allocationSize = 1)
     private Long id;
 
     @Column(name="first_name", length = 128)
@@ -38,6 +39,9 @@ public class Patient {
     )
     @JoinColumn(name = "dossier_id", referencedColumnName = "id")
     private Dossier dossier;
+
+    @Column(name="next_appointment")
+    private LocalDate nextAppointment;
 
     //getters & setters
 
@@ -83,5 +87,13 @@ public class Patient {
 
     public void setDossier(Dossier dossier) {
         this.dossier = dossier;
+    }
+
+    public LocalDate getNextAppointment() {
+        return nextAppointment;
+    }
+
+    public void setNextAppointment(LocalDate nextAppointment) {
+        this.nextAppointment = nextAppointment;
     }
 }

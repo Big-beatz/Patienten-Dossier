@@ -11,7 +11,7 @@ public class Report {
     //properties
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator ="reports_generator")
-    @SequenceGenerator(name ="reports_generator" , initialValue = 10, allocationSize = 10)
+    @SequenceGenerator(name ="reports_generator" , allocationSize = 1)
     private Long id;
 
     @Column(name="date")
@@ -19,8 +19,6 @@ public class Report {
 
     @Column(name="body", length = 1000)
     private String body;
-
-
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "dossier_id")
