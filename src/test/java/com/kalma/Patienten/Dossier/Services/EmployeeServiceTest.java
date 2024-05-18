@@ -88,19 +88,16 @@ class EmployeeServiceTest {
 
     @Test
     public void shouldCreateEmployee() {
-        //Arrande
         when(roleRepository.existsByRolename(anyString())).thenReturn(true);
         when(roleRepository.findById(anyString())).thenReturn(Optional.of(role));
         when(employeeRepository.save(any(Employee.class))).thenAnswer(invocation -> {
             Employee savedEmployee = invocation.getArgument(0);
-            savedEmployee.setId(1L); // Simulate setting ID upon saving
+            savedEmployee.setId(1L);
             return savedEmployee;
         });        when(employeeRepository.findEmployeeByUsername(anyString())).thenReturn(Optional.of(employee));
 
-        //act
         EmployeeDto result = employeeService.createEmployee(employeeDto);
 
-        //assert
         verify(employeeRepository, times(1)).save(any(Employee.class));
         verify(exceptionService, never()).InputNotValidException(anyString());
 
@@ -150,29 +147,21 @@ class EmployeeServiceTest {
 
     @Test
     void stReportsToNUllWhenDeletingEmployee() {
-        // Mock employee to delete
         Employee employeeToDelete = new Employee();
         employeeToDelete.setId(1L);
-        // Set up mock to return employee to delete
         when(employeeRepository.findById(1L)).thenReturn(Optional.of(employeeToDelete));
 
-        // Mock reports associated with the employee
         reports = Collections.singletonList(report);
-        // Set up mock to return reports
         when(reportRepository.findByEmployeeId(1L)).thenReturn(reports);
 
-        // Call the method under test
         String result = employeeService.deleteEmployee(1L);
 
-        // Verify that reports' employee reference is set to null and save is called for each report
         for (Report report : reports) {
             verify(reportRepository).save(report);
         }
 
-        // Verify that employee deletion is attempted
         verify(employeeRepository).delete(employeeToDelete);
 
-        // Verify the result
         assertNull(report.getEmployee());
 
         assertEquals("Employee deleted successfully", result);
@@ -312,7 +301,6 @@ class EmployeeServiceTest {
 
     @Test
     void getAllEmployees() {
-        // Mock list of employees from repository
         List<Employee> mockEmployees = new ArrayList<>();
 
         Employee employeeLola = new Employee();
@@ -324,13 +312,10 @@ class EmployeeServiceTest {
         mockEmployees.add(employee);
         mockEmployees.add(employeeLola);
 
-        // Mock repository behavior
         when(employeeRepository.findAll()).thenReturn(mockEmployees);
 
-        // Call the method under test
         List<EmployeeDto> employeeDtos = employeeService.getAllEmployees();
 
-        // Verify the conversion from Employee to EmployeeDto
         assertEquals(mockEmployees.size(), employeeDtos.size());
         assertEquals(employee.getId(), employeeDtos.get(0).id);
         assertEquals(employee.getFirstName(), employeeDtos.get(0).firstName);
