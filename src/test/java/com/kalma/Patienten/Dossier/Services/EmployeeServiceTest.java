@@ -29,7 +29,6 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class EmployeeServiceTest {
 
-
     @Mock
     EmployeeRepository employeeRepository;
     @Mock
@@ -53,12 +52,12 @@ class EmployeeServiceTest {
     private List<Report> reports;
 
     private final String token = "Bearer testToken";
-    private final String doctor = "doctor";
-    private final String secretary = "secretary";
 
 
     @BeforeEach
     void setUp() {
+        String doctor = "doctor";
+
         employee = new Employee();
         employee.setId(1L);
         employee.setFirstName("Johnny");

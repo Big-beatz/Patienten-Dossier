@@ -34,21 +34,6 @@ public class PatientController {
     public ResponseEntity<List<PatientDto>> getAllPatients() {
         return ResponseEntity.ok(patientService.getAllPatients());
     }
-//    can move these to service
-//    @GetMapping("/firstName")
-//    public ResponseEntity<List<Patient>> getPatientByFirstName(@RequestParam String firstName) {
-//        return ResponseEntity.ok(patientRepository.findPatientByFirstName(firstName));
-//    }
-//
-//    @GetMapping("/lastName")
-//    public ResponseEntity<List<Patient>> getPatientByLastName(@RequestParam String lastName) {
-//        return ResponseEntity.ok(patientRepository.findPatientByLastNameContaining(lastName));
-//    }
-//
-//    @GetMapping("/partialName")
-//    public ResponseEntity<List<Patient>> getPatientBySubString(@RequestParam String partialName) {
-//        return ResponseEntity.ok(patientRepository.findPatientByFullNameContaining(partialName));
-//    }
 
     @PostMapping
     public ResponseEntity<Object> createPatient(@Valid @RequestHeader("Authorization") String token, @RequestBody PatientDto patientDto, BindingResult br) {
