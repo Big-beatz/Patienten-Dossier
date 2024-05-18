@@ -6,8 +6,11 @@ import com.kalma.Patienten.Dossier.dto.ReportDto;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.net.URI;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
@@ -70,5 +73,47 @@ public class ReportController {
             return ResponseEntity.created(uri).body(reportDto);
         }
         return null;
+    }
+
+    @PostMapping("/manual")
+    public ResponseEntity<Object> createManualReport(@Valid @RequestParam("file") MultipartFile file,
+                                                     @RequestParam("dossier_name") String dossierName,
+                                                     @RequestHeader("Authorization") String token,
+                                                     @RequestParam("date") String dateString
+                                                     ){
+        LocalDate date = null;
+        try {
+            date = LocalDate.parse(dateString);
+        } catch (DateTimeParseException exception) {
+            exceptionService.InputNotValidException("Date should be formated YYYY-mm-dd");
+        }
+        if(dossierName == null || dossierName.isEmpty()){
+            exceptionService.InputNotValidException("Dossier_name is required");
+        }
+        if(file.isEmpty()) {
+            exceptionService.InputNotValidException("File is not allowed");
+        }
+       else {
+            ReportDto reportDto = reportService.createManualReport(
+                    file,
+                    dossierName,
+                    date,
+                    token
+            );
+
+            URI uri = URI.create(
+                    ServletUriComponentsBuilder.
+                            fromCurrentRequest().
+                            path("/" + reportDto.id).
+                            toUriString());
+
+            return ResponseEntity.created(uri).body(reportDto);
+        }
+        return null;
+    }
+
+    @GetMapping("/download/{path:.+}")
+    public ResponseEntity<Object> downloadFile(@PathVariable("path") String filename) {
+        return reportService.downloadReportFile(filename);
     }
 }

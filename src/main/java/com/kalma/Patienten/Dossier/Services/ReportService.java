@@ -5,7 +5,17 @@ import com.kalma.Patienten.Dossier.models.Dossier;
 import com.kalma.Patienten.Dossier.models.Employee;
 import com.kalma.Patienten.Dossier.models.Report;
 import com.kalma.Patienten.Dossier.repository.ReportRepository;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,8 +77,109 @@ public class ReportService {
         }
 
 
+    public ReportDto createManualReport(MultipartFile file, String dossierName, LocalDate date, String token) {
+        //initialise
+        ReportDto reportDto = new ReportDto();
 
-        //mapping functions
+        reportDto.reportFile = uploadMamualReport(file);
+
+        //check if user is allowed to create patient
+        Employee employee = employeeService.getEmployeeByToken(token);
+
+        //getDossier
+        Dossier dossier = dossierService.getDossierByName(dossierName);
+
+        //check if dossier is not closed
+        if(dossier.getDossierIsClosed()) {
+            exceptionService.AddingReportNotAllowedException("Dossier with name " + dossierName + " is closed");
+        }
+
+        reportDto.date = date;
+        reportDto.dossierId = dossier.getId();
+        reportDto.employeeId = employee.getId();
+
+        //make report
+        Report report = dtoToReport(reportDto);
+        reportRepository.save(report);
+
+        reportDto.id = report.getId();
+
+        return reportDto;
+
+    }
+
+    public String uploadMamualReport(MultipartFile file) {
+        String filePath = System.getProperty("user.dir") + "/uploads" + File.separator + file.getOriginalFilename();
+
+        try {
+            FileOutputStream fout = new FileOutputStream(filePath);
+            fout.write(file.getBytes());
+
+            fout.close();
+        }
+
+        catch (Exception exception) {
+            exception.printStackTrace();
+        }
+        return filePath;
+    }
+
+    public String[] getFiles()
+    {
+        String folderPath = System.getProperty("user.dir");
+
+        File directory= new File(folderPath);
+
+        String[] filenames = directory.list();
+
+        return filenames;
+    }
+
+
+    public ResponseEntity downloadReportFile(String fileName){
+        String fileUploadpath = System.getProperty("user.dir") + "/uploads";
+
+        File directory = new File(fileUploadpath);
+        File[] files = directory.listFiles();
+
+        List<String> fileNames = new ArrayList<>();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isFile()) {
+                    fileNames.add(file.getName());
+                }
+            }
+        }
+
+        boolean contains = fileNames.contains(fileName);
+        if(!contains) {
+            exceptionService.FileNotFoundException("FIle Not Found");
+        }
+
+        String filePath = fileUploadpath+File.separator+fileName;
+
+        File file= new File(filePath);
+
+        InputStreamResource resource = null;
+        try {
+            resource = new InputStreamResource(new FileInputStream(file));
+        } catch (Exception exception){
+            exception.printStackTrace();
+        }
+
+        String contentType = "application/octet-stream";
+        String headerValue = "attachment; filename=\"" + resource.getFilename() + "\"";
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(contentType))
+                .header(HttpHeaders.CONTENT_DISPOSITION, headerValue)
+                .body(resource);
+    }
+
+
+
+
+    //mapping functions
     public Report dtoToReport(ReportDto reportDto) {
         Report report = new Report();
 
@@ -80,6 +191,8 @@ public class ReportService {
         if(reportDto.employeeId != null) {
             report.setEmployee(employeeService.getEmployeeById(reportDto.employeeId));
         }
+        //setReportFile
+        report.setReportFile(reportDto.reportFile);
         return report;
     }
 

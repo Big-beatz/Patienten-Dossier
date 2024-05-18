@@ -30,4 +30,8 @@ public class ExceptionService {
     public void DeleteNotAllowed(String message) throws DeleteNotAllowed {
         throw new DeleteNotAllowed(message);
     }
+
+    public void FileNotFoundException(String message) throws FileNotFoundException {
+        throw new FileNotFoundException(message);
+    }
 }

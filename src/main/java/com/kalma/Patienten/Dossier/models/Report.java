@@ -1,6 +1,7 @@
 package com.kalma.Patienten.Dossier.models;
 
 import jakarta.persistence.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.time.LocalDate;
@@ -11,14 +12,14 @@ public class Report {
 
     //properties
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator ="reports_generator")
-    @SequenceGenerator(name ="reports_generator" , allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "reports_generator")
+    @SequenceGenerator(name = "reports_generator", allocationSize = 1)
     private Long id;
 
-    @Column(name="date")
+    @Column(name = "date")
     private LocalDate date;
 
-    @Column(name="body", length = 1000)
+    @Column(name = "body", length = 1000)
     private String body;
 
     @ManyToOne(cascade = CascadeType.ALL)
@@ -26,11 +27,13 @@ public class Report {
     Dossier dossier;
 
     @ManyToOne()
-    @JoinColumn(name="employees_id")
+    @JoinColumn(name = "employees_id")
     Employee employee;
 
-    @Column(name="manual_report")
-    private File manualReport;
+    private String reportFile;
+
+//    @Column(name="manual_report")
+//    private MultipartFile manualReport;
 
     public Long getId() {
         return id;
@@ -72,11 +75,11 @@ public class Report {
         this.employee = employee;
     }
 
-    public File getManualReport() {
-        return manualReport;
+    public String getReportFile() {
+        return reportFile;
     }
 
-    public void setManualReport(File manualReport) {
-        this.manualReport = manualReport;
+    public void setReportFile(String reportFile) {
+        this.reportFile = reportFile;
     }
 }

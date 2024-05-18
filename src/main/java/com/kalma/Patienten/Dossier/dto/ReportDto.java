@@ -1,7 +1,10 @@
 package com.kalma.Patienten.Dossier.dto;
 
 
+import org.springframework.web.multipart.MultipartFile;
+
 import java.io.File;
+import java.io.FileOutputStream;
 import java.time.LocalDate;
 
 public class ReportDto {
@@ -15,5 +18,5 @@ public class ReportDto {
 
     public Long employeeId;
 
-    public File manualReport;
+    public String reportFile;
 }

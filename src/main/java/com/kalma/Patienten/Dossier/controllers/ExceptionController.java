@@ -39,5 +39,10 @@ public class ExceptionController {
     public ResponseEntity<Object> DeleteNotAllowed(InvalidFunctionException exception) {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.METHOD_NOT_ALLOWED);
     }
+
+    @ExceptionHandler(value = FileNotFoundException.class)
+    public ResponseEntity<Object> FileNotFoundException(FileNotFoundException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
+    }
 }
 
