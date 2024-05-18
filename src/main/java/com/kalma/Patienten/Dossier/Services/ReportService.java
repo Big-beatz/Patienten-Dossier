@@ -7,7 +7,6 @@ import com.kalma.Patienten.Dossier.models.Report;
 import com.kalma.Patienten.Dossier.repository.ReportRepository;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -109,6 +108,11 @@ public class ReportService {
     }
 
     public String uploadMamualReport(MultipartFile file) {
+        //check if file is .pdf
+        String fileName = file.getOriginalFilename();
+        if(!fileName.contains(".pdf")){
+            exceptionService.InputNotValidException("File name should end with '.pdf'");
+        }
         String filePath = System.getProperty("user.dir") + "/uploads" + File.separator + file.getOriginalFilename();
 
         try {
@@ -121,18 +125,7 @@ public class ReportService {
         catch (Exception exception) {
             exception.printStackTrace();
         }
-        return filePath;
-    }
-
-    public String[] getFiles()
-    {
-        String folderPath = System.getProperty("user.dir");
-
-        File directory= new File(folderPath);
-
-        String[] filenames = directory.list();
-
-        return filenames;
+        return fileName;
     }
 
 
@@ -175,8 +168,6 @@ public class ReportService {
                 .header(HttpHeaders.CONTENT_DISPOSITION, headerValue)
                 .body(resource);
     }
-
-
 
 
     //mapping functions
