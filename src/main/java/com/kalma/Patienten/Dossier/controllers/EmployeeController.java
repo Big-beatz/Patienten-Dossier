@@ -3,7 +3,6 @@ package com.kalma.Patienten.Dossier.controllers;
 import com.kalma.Patienten.Dossier.Services.EmployeeService;
 import com.kalma.Patienten.Dossier.dto.EmployeeDto;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -50,7 +49,7 @@ public class EmployeeController {
                                 path("/" + employeeDto.id).
                                 toUriString()
                 );
-                return new ResponseEntity<>(employeeDto, HttpStatus.CREATED);
+                return ResponseEntity.created(uri).body(employeeDto);
         }
     }
 }

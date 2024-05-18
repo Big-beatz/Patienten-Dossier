@@ -1,8 +1,8 @@
 package com.kalma.Patienten.Dossier.controllers;
 
 import com.kalma.Patienten.Dossier.Services.DossierService;
-import com.kalma.Patienten.Dossier.Services.ReportService;
 import com.kalma.Patienten.Dossier.dto.DossierDto;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -29,7 +29,7 @@ public class DossierController {
 
     //todo figure out if this is ever needed, probably not, maybe for an ADMIN.
     @PostMapping
-    public ResponseEntity<Object> createDossier(@RequestBody DossierDto dossierDto, BindingResult br) {
+    public ResponseEntity<Object> createDossier(@Valid @RequestBody DossierDto dossierDto, BindingResult br) {
         if (br.hasFieldErrors()) {
             StringBuilder sb = new StringBuilder();
             for (FieldError fieldError : br.getFieldErrors()) {
@@ -51,5 +51,14 @@ public class DossierController {
 
             return ResponseEntity.created(uri).body(dossierDto);
         }
+    }
+
+    @PutMapping("/close_or_open")
+    public ResponseEntity<Object> closeOrOpenDossier(@RequestParam Long dossierId,
+                                                     @RequestHeader("Authorization") String token
+    ) {
+        boolean newValueDossierIsClosed = dossierService.closeOrOpenDossier(dossierId, token);
+
+        return ResponseEntity.ok().body("dossier_is_closed for dossier with id " + dossierId + " has been set to " + newValueDossierIsClosed);
     }
 }

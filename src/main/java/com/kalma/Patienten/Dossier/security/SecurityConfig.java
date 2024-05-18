@@ -56,7 +56,7 @@ public class SecurityConfig  {
                         .requestMatchers(HttpMethod.POST, "/auth").permitAll()
                         .requestMatchers("/patients").permitAll()
                         .requestMatchers("/patients/*").permitAll()
-                        .requestMatchers("/dossiers").permitAll()
+                        .requestMatchers("/dossiers/*").permitAll()
                         .requestMatchers("/reports").permitAll()
                         .anyRequest().denyAll()
                 )

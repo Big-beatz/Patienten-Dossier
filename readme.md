@@ -28,13 +28,16 @@ patient - next appointment - /patients/appointment
 
 
 
-### Update
+### Put
 
-Dossier - isDossierClosed /dossiers{id}/{isDossierClosed}
+Dossier - isDossierClosed /dossiers/open
+*muse be done by secretary*
 *reports can't be added when dossier is closed*
 
 patient - set next appointment - /patients/appointment
 *add the keys:String nextAppointment, Long patientId, String employeeUsername*
+
+
 
 ### Delete
 Employee By username /employees{username}

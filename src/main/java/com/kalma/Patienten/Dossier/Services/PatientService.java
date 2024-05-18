@@ -47,23 +47,14 @@ public class PatientService {
     //todo can only be done by Secretary
     public PatientDto createPatient(PatientDto patientDto, String token){
         //check if user is allowed to create patient
-        if (token.startsWith("Bearer ")) {
-            token = token.substring(7);
-        }
-        String username = jwtService.extractUsername(token);
-        Optional<Employee> optionalEmployee= employeeRepository.findEmployeeByUsername(username);
-        if(optionalEmployee.isPresent()) {
-            Employee employee = optionalEmployee.get();
-            employeeService.checkIfUserIsSecretary(employee);
-        } else{
-            exceptionService.RecordNotFoundException("Username " + username + " is not found");
-        }
+        Employee employee = employeeService.getEmployeeByToken(token);
+        employeeService.checkIfUserIsSecretary(employee);
 
         Patient patient = dtoToPatient(patientDto);
 
         //create dossierDto
         DossierDto dossierDto = new DossierDto();
-        dossierDto.name = patientDto.fullName;
+        dossierDto.name = patientDto.firstName + " " + patientDto.lastName; ;
         dossierDto.dossierIsClosed = false;
         dossierService.createDossier(patient.getId(), dossierDto);
 

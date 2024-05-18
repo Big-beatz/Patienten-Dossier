@@ -1,27 +1,19 @@
 package com.kalma.Patienten.Dossier.controllers;
 
-import com.kalma.Patienten.Dossier.Services.DossierService;
 import com.kalma.Patienten.Dossier.Services.ExceptionService;
 import com.kalma.Patienten.Dossier.Services.PatientService;
 import com.kalma.Patienten.Dossier.dto.PatientDto;
-import com.kalma.Patienten.Dossier.models.Employee;
-import com.kalma.Patienten.Dossier.models.Patient;
-import com.kalma.Patienten.Dossier.repository.EmployeeRepository;
-import com.kalma.Patienten.Dossier.repository.PatientRepository;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
 import java.net.URI;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+
 
 @RestController
 @RequestMapping("/patients")
@@ -59,7 +51,7 @@ public class PatientController {
 //    }
 
     @PostMapping
-    public ResponseEntity<Object> createPatient(@Valid @RequestBody PatientDto patientDto, @RequestHeader("Authorization") String token, BindingResult br) {
+    public ResponseEntity<Object> createPatient(@Valid @RequestHeader("Authorization") String token, @RequestBody PatientDto patientDto, BindingResult br) {
 
         if (br.hasFieldErrors()) {
             StringBuilder sb = new StringBuilder();

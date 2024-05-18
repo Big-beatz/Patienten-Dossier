@@ -1,15 +1,16 @@
 package com.kalma.Patienten.Dossier.controllers;
 
+import com.kalma.Patienten.Dossier.Services.ExceptionService;
 import com.kalma.Patienten.Dossier.Services.ReportService;
 import com.kalma.Patienten.Dossier.dto.ReportDto;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 
 @RestController
@@ -17,9 +18,13 @@ import java.util.List;
 public class ReportController {
 
     private final ReportService reportService;
+    private final ExceptionService exceptionService;
 
-    public ReportController(ReportService reportService) {
+    public ReportController(ReportService reportService,
+                            ExceptionService exceptionService
+    ) {
         this.reportService = reportService;
+        this.exceptionService = exceptionService;
     }
 
     @GetMapping
@@ -29,18 +34,32 @@ public class ReportController {
 
     //todo add employee ID through authentication.
     @PostMapping
-    public ResponseEntity<Object> createReport(@Valid @RequestBody ReportDto reportDto, BindingResult br){
-        if (br.hasFieldErrors()) {
-            StringBuilder sb = new StringBuilder();
-            for (FieldError fieldError : br.getFieldErrors()) {
-                sb.append(fieldError.getField());
-                sb.append(": ");
-                sb.append(fieldError.getDefaultMessage());
-                sb.append("\n");
-            }
-            return ResponseEntity.badRequest().body(sb.toString());
+    public ResponseEntity<Object> createReport(@Valid @RequestParam("body") String body,
+                                               @RequestParam("dossier_name") String dossierName,
+                                               @RequestParam("date") String dateString,
+                                               @RequestHeader("Authorization") String token)
+    {
+        LocalDate date = null;
+        try {
+            date = LocalDate.parse(dateString);
+        } catch (DateTimeParseException exception) {
+            exceptionService.InputNotValidException("Date should be formated YYYY-mm-dd");
+        }
+        if(dossierName == null || dossierName.isEmpty()){
+            exceptionService.InputNotValidException("Dossier_name is required");
+        }
+        if(body == null || body.isEmpty()) {
+            exceptionService.InputNotValidException("Body is required");
+        }
+        if(body != null && body.length() >= 1000) {
+            exceptionService.InputNotValidException("Body can be only 1000 characters long");
         } else {
-            reportDto = reportService.createReport(reportDto);
+            ReportDto reportDto = reportService.createReport(
+                    body,
+                    dossierName,
+                    date,
+                    token
+            );
 
             URI uri = URI.create(
                     ServletUriComponentsBuilder.
@@ -50,5 +69,6 @@ public class ReportController {
 
             return ResponseEntity.created(uri).body(reportDto);
         }
+        return null;
     }
 }

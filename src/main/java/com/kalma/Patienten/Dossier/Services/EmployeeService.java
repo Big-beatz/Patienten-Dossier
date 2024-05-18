@@ -8,6 +8,7 @@ import com.kalma.Patienten.Dossier.models.Role;
 import com.kalma.Patienten.Dossier.repository.EmployeeRepository;
 
 import com.kalma.Patienten.Dossier.repository.RoleRepository;
+import com.kalma.Patienten.Dossier.security.JwtService;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,15 +23,18 @@ public class EmployeeService {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final ExceptionService exceptionService;
+    private final JwtService jwtService;
 
     public EmployeeService(EmployeeRepository repository,
                            RoleRepository roleRepository,
                            PasswordEncoder passwordEncoder,
-                           ExceptionService exceptionService) {
+                           ExceptionService exceptionService,
+                           JwtService jwtService) {
         this.employeeRepository = repository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.exceptionService = exceptionService;
+        this.jwtService = jwtService;
     }
 
     public String doctor = "doctor";
@@ -94,11 +98,35 @@ public class EmployeeService {
         return employeeDtos;
     }
 
-    public EmployeeDto getEmployeeById(Long id) {
-        Employee employee = employeeRepository.findById(id).orElse(null);
-        EmployeeDto employeeDto = employeeToDto(employee);
+    public Employee getEmployeeByToken(String token){
+        Employee employee = new Employee();
 
-        return employeeDto;
+        if (token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+        //get username
+        String username = jwtService.extractUsername(token);
+
+        //find employee
+        Optional<Employee> optionalEmployee= employeeRepository.findEmployeeByUsername(username);
+        if(optionalEmployee.isPresent()) {
+            employee = optionalEmployee.get();
+        } else{
+            exceptionService.RecordNotFoundException("Employee " + username + " is not found");
+        }
+        return employee;
+    }
+
+    public Employee getEmployeeById(Long id) {
+        Optional<Employee> optionalEmployee = employeeRepository.findById(id);
+        Employee employee = new Employee();
+
+        if(optionalEmployee.isPresent()) {
+            employee = optionalEmployee.get();
+        } else{
+            exceptionService.RecordNotFoundException("Employee " + id + "is not found");
+        }
+        return employee;
     }
 
     public List<Long> getPatientIdList(Employee employee) {
