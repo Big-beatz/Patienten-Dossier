@@ -4,14 +4,13 @@ import com.kalma.Patienten.Dossier.Services.ExceptionService;
 import com.kalma.Patienten.Dossier.Services.PatientService;
 import com.kalma.Patienten.Dossier.dto.PatientDto;
 import com.kalma.Patienten.Dossier.models.Employee;
-import com.kalma.Patienten.Dossier.security.JwtService;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
@@ -19,22 +18,24 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.List;
+
+import static org.mockito.Mockito.when;
 
 
-@WebMvcTest(PatientController.class)
+@SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
-class PatientControllerTest {
+@ActiveProfiles("test")
+class PatientControllerIntegrationTest {
     @Autowired
     MockMvc mockMvc;
-
-    @MockBean
-    JwtService jwtService;
 
     @MockBean
     PatientService patientService;
 
     @MockBean
     ExceptionService exceptionService;
+
 
     @Test
     void shouldReceivePatients() throws Exception {
@@ -65,8 +66,9 @@ class PatientControllerTest {
         patientDto2.dossierId = 2L;
         patientDto2.nextAppointment = LocalDate.parse("2024-06-08");
         patientDto2.employeeIds = Arrays.asList(employee1.getId(), employee2.getId(), employee3.getId());
+        List<PatientDto> patients = Arrays.asList(patientDto, patientDto2);
 
-        Mockito.when(patientService.getAllPatients()).thenReturn(Arrays.asList(patientDto, patientDto2));
+        when(patientService.getAllPatients()).thenReturn(patients);
 
         this.mockMvc
                 .perform(MockMvcRequestBuilders.get("/patients"))
@@ -92,5 +94,27 @@ class PatientControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$[1].employeeIds[0]").value(1))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[1].employeeIds[1]").value(2))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[1].employeeIds[2]").value(3));
+    }
+
+    @Test
+    void shouldUpdateNextAppointment() throws Exception {
+        // Arrange
+        String nextAppointmentString = "2024-06-01";
+        Long patientId = 1L;
+        String employeeUsername = "testEmployee";
+        LocalDate nextAppointment = LocalDate.parse(nextAppointmentString);
+        String appointmentConfirmed = "Appointment confirmed";
+
+        when(patientService.setNextAppointment(nextAppointmentString, patientId, employeeUsername, nextAppointment))
+                .thenReturn(appointmentConfirmed);
+
+        // Act
+        this.mockMvc.perform(MockMvcRequestBuilders
+                        .put("/patients/appointment")
+                        .param("nextAppointment", nextAppointmentString)
+                        .param("patientId", patientId.toString())
+                        .param("employeeUsername", employeeUsername))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk());
     }
 }
