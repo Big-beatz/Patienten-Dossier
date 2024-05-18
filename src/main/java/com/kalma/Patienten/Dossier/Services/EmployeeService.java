@@ -3,7 +3,6 @@ package com.kalma.Patienten.Dossier.Services;
 
 import com.kalma.Patienten.Dossier.dto.EmployeeDto;
 import com.kalma.Patienten.Dossier.models.Employee;
-import com.kalma.Patienten.Dossier.models.Patient;
 import com.kalma.Patienten.Dossier.models.Report;
 import com.kalma.Patienten.Dossier.models.Role;
 import com.kalma.Patienten.Dossier.repository.EmployeeRepository;
@@ -86,11 +85,11 @@ public class EmployeeService {
 
         long adminCount = employeeRepository.findAll().stream()
                 .flatMap(employee -> employee.getRoles().stream())
-                .filter(role -> role.getRolename().equalsIgnoreCase("Role_ADMIN"))
+                .filter(role -> role.getRolename().equalsIgnoreCase("ROLE_ADMIN"))
                 .count();
 
         boolean isDeletingLastAdmin = adminCount == 1 && employeeToDelete.getRoles().stream()
-                .anyMatch(role -> role.getRolename().equalsIgnoreCase("Role_ADMIN"));
+                .anyMatch(role -> role.getRolename().equalsIgnoreCase("ROLE_ADMIN"));
 
         if(isDeletingLastAdmin) {
             exceptionService.DeleteNotAllowed("It is not allowed to delete the last employee with the role of Admin");
@@ -107,7 +106,7 @@ public class EmployeeService {
         employeeRepository.delete(employeeToDelete);
 
 
-        return "employee deleted successfully";
+        return "Employee deleted successfully";
     }
 
     public void checkIfUserNameExists(String username) {
@@ -164,17 +163,6 @@ public class EmployeeService {
         }
         return employee;
     }
-
-    public List<Long> getPatientIdList(Employee employee) {
-        List<Long> patientsIdList = new ArrayList();
-        for(Patient patient : employee.getPatients()){
-            patientsIdList.add(patient.getId());
-        }
-        return patientsIdList;
-    }
-
-
-
 
     public void checkIfEmployeeExists(String username) {
         Optional<Employee> optionalEmployee = employeeRepository.findEmployeeByUsername(username);

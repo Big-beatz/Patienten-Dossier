@@ -116,4 +116,8 @@ public class Employee {
     public Set<Role> getRoles() {
         return roles;
     }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
 }
