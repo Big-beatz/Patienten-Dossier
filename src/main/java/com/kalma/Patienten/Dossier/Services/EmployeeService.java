@@ -4,9 +4,11 @@ package com.kalma.Patienten.Dossier.Services;
 import com.kalma.Patienten.Dossier.dto.EmployeeDto;
 import com.kalma.Patienten.Dossier.models.Employee;
 import com.kalma.Patienten.Dossier.models.Patient;
+import com.kalma.Patienten.Dossier.models.Report;
 import com.kalma.Patienten.Dossier.models.Role;
 import com.kalma.Patienten.Dossier.repository.EmployeeRepository;
 
+import com.kalma.Patienten.Dossier.repository.ReportRepository;
 import com.kalma.Patienten.Dossier.repository.RoleRepository;
 import com.kalma.Patienten.Dossier.security.JwtService;
 import lombok.extern.slf4j.Slf4j;
@@ -24,17 +26,21 @@ public class EmployeeService {
     private final PasswordEncoder passwordEncoder;
     private final ExceptionService exceptionService;
     private final JwtService jwtService;
+    private final ReportRepository reportRepository;
 
     public EmployeeService(EmployeeRepository repository,
                            RoleRepository roleRepository,
                            PasswordEncoder passwordEncoder,
                            ExceptionService exceptionService,
-                           JwtService jwtService) {
+                           JwtService jwtService,
+                           ReportRepository reportRepository
+    ) {
         this.employeeRepository = repository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.exceptionService = exceptionService;
         this.jwtService = jwtService;
+        this.reportRepository = reportRepository;
     }
 
     public String doctor = "doctor";
@@ -72,6 +78,36 @@ public class EmployeeService {
             exceptionService.InputNotValidException("Function is not accepted, valid values are: " + doctor + ", " + secretary);
         }
         return employeeDto;
+    }
+
+    public String deleteEmployee(Long employeeId) {
+        //check if employeeToDelete is not the last admin
+        Employee employeeToDelete = getEmployeeById(employeeId);
+
+        long adminCount = employeeRepository.findAll().stream()
+                .flatMap(employee -> employee.getRoles().stream())
+                .filter(role -> role.getRolename().equalsIgnoreCase("Role_ADMIN"))
+                .count();
+
+        boolean isDeletingLastAdmin = adminCount == 1 && employeeToDelete.getRoles().stream()
+                .anyMatch(role -> role.getRolename().equalsIgnoreCase("Role_ADMIN"));
+
+        if(isDeletingLastAdmin) {
+            exceptionService.DeleteNotAllowed("It is not allowed to delete the last employee with the role of Admin");
+        }
+
+        //done like this to prevent circular dependency
+        List<Report> reports = reportRepository.findByEmployeeId(employeeId);
+        for (Report report : reports) {
+            report.setEmployee(null);
+            reportRepository.save(report);
+        }
+
+
+        employeeRepository.delete(employeeToDelete);
+
+
+        return "employee deleted successfully";
     }
 
     public void checkIfUserNameExists(String username) {

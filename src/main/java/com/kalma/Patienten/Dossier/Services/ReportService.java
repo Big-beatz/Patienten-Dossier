@@ -4,7 +4,6 @@ import com.kalma.Patienten.Dossier.dto.ReportDto;
 import com.kalma.Patienten.Dossier.models.Dossier;
 import com.kalma.Patienten.Dossier.models.Employee;
 import com.kalma.Patienten.Dossier.models.Report;
-import com.kalma.Patienten.Dossier.repository.DossierRepository;
 import com.kalma.Patienten.Dossier.repository.ReportRepository;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
@@ -15,14 +14,12 @@ import java.util.List;
 public class ReportService {
 
     private final ReportRepository reportRepository;
-    private final DossierRepository dossierRepository;
     private final DossierService dossierService;
     private final EmployeeService employeeService;
     private final ExceptionService exceptionService;
 
-    public ReportService(ReportRepository repository, DossierRepository dossierRepository, DossierService dossierService, EmployeeService employeeService, ExceptionService exceptionService) {
+    public ReportService(ReportRepository repository, DossierService dossierService, EmployeeService employeeService, ExceptionService exceptionService) {
         this.reportRepository = repository;
-        this.dossierRepository = dossierRepository;
         this.dossierService = dossierService;
         this.employeeService = employeeService;
         this.exceptionService = exceptionService;

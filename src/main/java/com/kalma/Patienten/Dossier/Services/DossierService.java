@@ -24,7 +24,8 @@ public class DossierService {
     public DossierService(DossierRepository repository,
                           PatientRepository patientRepository,
                           ExceptionService exceptionService,
-                          EmployeeService employeeService) {
+                          EmployeeService employeeService
+    ) {
         this.dossierRepository = repository;
         this.patientRepository = patientRepository;
         this.exceptionService = exceptionService;
@@ -34,7 +35,7 @@ public class DossierService {
     public DossierDto createDossier(Long patientId, DossierDto dossierDto) {
         Dossier dossier = dtoToDossier(dossierDto);
 
-        //link to patient
+        //link to patient done like this to prevent circular dependency
         if(patientId != null) {
             Patient patientById = patientRepository.findById(patientId).get();
             if (patientById.getDossier() == null) {

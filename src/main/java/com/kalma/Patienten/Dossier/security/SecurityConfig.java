@@ -50,14 +50,14 @@ public class SecurityConfig  {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, "/users").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/employees").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/employees").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/employees").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/employees").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/employees/*").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/auth").permitAll()
-                        .requestMatchers("/patients").permitAll()
-                        .requestMatchers("/patients/*").permitAll()
-                        .requestMatchers("/dossiers/*").permitAll()
-                        .requestMatchers("/reports").permitAll()
+                        .requestMatchers("/patients").authenticated()
+                        .requestMatchers("/patients/*").authenticated()
+                        .requestMatchers("/dossiers/*").authenticated()
+                        .requestMatchers("/reports").authenticated()
                         .anyRequest().denyAll()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

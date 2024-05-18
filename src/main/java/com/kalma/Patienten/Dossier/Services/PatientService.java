@@ -6,7 +6,6 @@ import com.kalma.Patienten.Dossier.models.Employee;
 import com.kalma.Patienten.Dossier.models.Patient;
 import com.kalma.Patienten.Dossier.repository.EmployeeRepository;
 import com.kalma.Patienten.Dossier.repository.PatientRepository;
-import com.kalma.Patienten.Dossier.security.JwtService;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,7 +22,6 @@ public class PatientService {
 
     private final PatientRepository patientRepository;
     private final DossierService dossierService;
-    private final JwtService jwtService;
     private final EmployeeRepository employeeRepository;
     private final EmployeeService employeeService;
     private final ExceptionService exceptionService;
@@ -31,14 +29,12 @@ public class PatientService {
 
     public PatientService(PatientRepository repository,
                           DossierService dossierService,
-                          JwtService jwtService,
                           EmployeeRepository employeeRepository,
                           EmployeeService employeeService,
                           ExceptionService exceptionService
     ) {
         this.patientRepository = repository;
         this.dossierService = dossierService;
-        this.jwtService = jwtService;
         this.employeeRepository = employeeRepository;
         this.employeeService = employeeService;
         this.exceptionService = exceptionService;
@@ -77,7 +73,10 @@ public class PatientService {
                                      String employeeUsername,
                                      LocalDate nextAppointment
     ){
-        Patient patient = patientRepository.findPatientById(patientId);
+        //getPatient
+        Patient patient = getPatientById(patientId);
+
+        // set appointment
         patient.setNextAppointment(nextAppointment);
 
         //check if userName is valid
@@ -125,9 +124,16 @@ public class PatientService {
         }
         return employeeIdList;
     }
-
     public Patient getPatientById(Long id) {
-        return patientRepository.findPatientById(id);
+        Optional<Patient> optionalPatient = patientRepository.findById(id);
+        Patient patient = new Patient();
+
+        if(optionalPatient.isPresent()) {
+            patient = optionalPatient.get();
+        } else{
+            exceptionService.RecordNotFoundException("Employee " + id + "is not found");
+        }
+        return patient;
     }
 
     public LocalDate setNextAppointMent(Patient patient) {

@@ -34,5 +34,10 @@ public class ExceptionController {
     public ResponseEntity<Object> NotASecretaryException(InvalidFunctionException exception) {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.METHOD_NOT_ALLOWED);
     }
+
+    @ExceptionHandler(value = DeleteNotAllowed.class)
+    public ResponseEntity<Object> DeleteNotAllowed(InvalidFunctionException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.METHOD_NOT_ALLOWED);
+    }
 }
 

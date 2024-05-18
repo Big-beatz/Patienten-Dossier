@@ -1,8 +1,10 @@
 package com.kalma.Patienten.Dossier.controllers;
 
 import com.kalma.Patienten.Dossier.Services.EmployeeService;
+import com.kalma.Patienten.Dossier.Services.ExceptionService;
 import com.kalma.Patienten.Dossier.dto.EmployeeDto;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -16,10 +18,12 @@ import java.util.List;
 @RequestMapping("employees")
 public class EmployeeController {
     private final EmployeeService employeeService;
+    private final ExceptionService exceptionService;
 
     //illegal action add this in the layer
-    public EmployeeController(EmployeeService employeeService) {
+    public EmployeeController(EmployeeService employeeService, ExceptionService exceptionService) {
         this.employeeService = employeeService;
+        this.exceptionService = exceptionService;
     }
 
     @GetMapping
@@ -50,6 +54,22 @@ public class EmployeeController {
                                 toUriString()
                 );
                 return ResponseEntity.created(uri).body(employeeDto);
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> deleteEmployee(@PathVariable("id") Long employeeId) {
+        //check if input is valid
+        if(employeeId == null || employeeId <= 0) {
+            exceptionService.InputNotValidException("Employee id is required");
+        }
+        try {
+            //delete employee
+            String deletedMessage = employeeService.deleteEmployee(employeeId);
+
+            return ResponseEntity.ok(deletedMessage);
+        } catch (Exception exception){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(exception.getMessage());
         }
     }
 }

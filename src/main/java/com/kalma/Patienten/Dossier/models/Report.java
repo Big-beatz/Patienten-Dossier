@@ -2,6 +2,7 @@ package com.kalma.Patienten.Dossier.models;
 
 import jakarta.persistence.*;
 
+import java.io.File;
 import java.time.LocalDate;
 
 @Entity
@@ -27,6 +28,9 @@ public class Report {
     @ManyToOne()
     @JoinColumn(name="employees_id")
     Employee employee;
+
+    @Column(name="manual_report")
+    private File manualReport;
 
     public Long getId() {
         return id;
@@ -68,4 +72,11 @@ public class Report {
         this.employee = employee;
     }
 
+    public File getManualReport() {
+        return manualReport;
+    }
+
+    public void setManualReport(File manualReport) {
+        this.manualReport = manualReport;
+    }
 }

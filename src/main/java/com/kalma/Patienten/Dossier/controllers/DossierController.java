@@ -28,30 +28,30 @@ public class DossierController {
     }
 
     //todo figure out if this is ever needed, probably not, maybe for an ADMIN.
-    @PostMapping
-    public ResponseEntity<Object> createDossier(@Valid @RequestBody DossierDto dossierDto, BindingResult br) {
-        if (br.hasFieldErrors()) {
-            StringBuilder sb = new StringBuilder();
-            for (FieldError fieldError : br.getFieldErrors()) {
-                sb.append(fieldError.getField());
-                sb.append(": ");
-                sb.append(fieldError.getDefaultMessage());
-                sb.append("\n");
-            }
-            return ResponseEntity.badRequest().body(sb.toString());
-        } else {
-            Long placeHolderPatientId = null;
-            dossierDto = dossierService.createDossier(placeHolderPatientId, dossierDto);
-
-            URI uri = URI.create(
-                    ServletUriComponentsBuilder.
-                            fromCurrentRequest().
-                            path("/" + dossierDto.id).
-                            toUriString());
-
-            return ResponseEntity.created(uri).body(dossierDto);
-        }
-    }
+//    @PostMapping
+//    public ResponseEntity<Object> createDossier(@Valid @RequestBody DossierDto dossierDto, BindingResult br) {
+//        if (br.hasFieldErrors()) {
+//            StringBuilder sb = new StringBuilder();
+//            for (FieldError fieldError : br.getFieldErrors()) {
+//                sb.append(fieldError.getField());
+//                sb.append(": ");
+//                sb.append(fieldError.getDefaultMessage());
+//                sb.append("\n");
+//            }
+//            return ResponseEntity.badRequest().body(sb.toString());
+//        } else {
+//            Long placeHolderPatientId = null;
+//            dossierDto = dossierService.createDossier(placeHolderPatientId, dossierDto);
+//
+//            URI uri = URI.create(
+//                    ServletUriComponentsBuilder.
+//                            fromCurrentRequest().
+//                            path("/" + dossierDto.id).
+//                            toUriString());
+//
+//            return ResponseEntity.created(uri).body(dossierDto);
+//        }
+//    }
 
     @PutMapping("/close_or_open")
     public ResponseEntity<Object> closeOrOpenDossier(@RequestParam Long dossierId,
