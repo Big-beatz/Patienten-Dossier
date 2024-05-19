@@ -93,7 +93,8 @@ class EmployeeServiceTest {
             Employee savedEmployee = invocation.getArgument(0);
             savedEmployee.setId(1L);
             return savedEmployee;
-        });        when(employeeRepository.findEmployeeByUsername(anyString())).thenReturn(Optional.of(employee));
+        });
+        when(employeeRepository.findEmployeeByUsername(anyString())).thenReturn(Optional.of(employee));
 
         EmployeeDto result = employeeService.createEmployee(employeeDto);
 
@@ -295,8 +296,6 @@ class EmployeeServiceTest {
 
         verify(exceptionService, times(1)).RecordNotFoundException("Employee not found");
     }
-
-
 
     @Test
     void getAllEmployees() {

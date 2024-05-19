@@ -38,7 +38,7 @@ public class DossierService {
         //link to patient done like this to prevent circular dependency
         if(patientId != null) {
             Patient patientById = patientRepository.findById(patientId).get();
-            if (patientById.getDossier() == null) {
+            if (patientById.getDossier() == null){
                 dossierDto.name = patientById.getFullName();
                 patientById.setDossier(dossier);
                 patientRepository.save(patientById);
@@ -93,8 +93,8 @@ public class DossierService {
         dossierRepository.save(dossier);
 
         return newValueDossierIsClosed;
-
     }
+
     public Dossier getDossierById(Long id) {
         Optional<Dossier> optionalDossier = dossierRepository.findById(id);
         Dossier dossier = new Dossier();
