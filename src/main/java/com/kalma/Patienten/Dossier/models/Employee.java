@@ -47,6 +47,7 @@ public class Employee {
     private Set<Role> roles = new HashSet<>();
 
     //getters & setters
+
     public Long getId() {
         return id;
     }
@@ -91,7 +92,6 @@ public class Employee {
     public Set<Patient> getPatients() {
         return patients;
     }
-
 
     public void setPatients(Set<Patient> patients) {
         this.patients = patients;

@@ -58,9 +58,8 @@ public class SecurityConfig  {
                         .requestMatchers("/patients/*").authenticated()
                         .requestMatchers("/dossiers/*").authenticated()
                         .requestMatchers("/reports").authenticated()
-                        .requestMatchers("/reports/*").permitAll()
-                        .requestMatchers("/reports/*/*").permitAll()
-
+                        .requestMatchers("/reports/*").authenticated()
+                        .requestMatchers("/reports/*/*").authenticated()
                         .anyRequest().denyAll()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

@@ -26,7 +26,6 @@ public class PatientService {
     private final EmployeeService employeeService;
     private final ExceptionService exceptionService;
 
-
     public PatientService(PatientRepository repository,
                           DossierService dossierService,
                           EmployeeRepository employeeRepository,
@@ -105,8 +104,6 @@ public class PatientService {
         return ("Next Appointment on " + nextAppointmentString + " with " + employeeUsername);
     }
 
-
-    //todo can only be done by Secretary
     public List<PatientDto> getAllPatients(){
         List<Patient> patients = patientRepository.findAll();
         List<PatientDto> patientDtos = new ArrayList<>();
@@ -136,10 +133,6 @@ public class PatientService {
         return patient;
     }
 
-    public LocalDate setNextAppointMent(Patient patient) {
-        return patient.getNextAppointment();
-    }
-
     //mapping functions
     public Patient dtoToPatient(PatientDto patientDto){
         Patient patient = new Patient();
@@ -166,7 +159,6 @@ public class PatientService {
         if(patient.getEmployees() != null) {
             patientDto.employeeIds = getEmployeeIdList(patient);
         }
-
         return patientDto;
     }
 }

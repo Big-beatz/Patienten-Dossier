@@ -1,9 +1,6 @@
 package com.kalma.Patienten.Dossier.models;
 
 import jakarta.persistence.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.File;
 import java.time.LocalDate;
 
 @Entity
@@ -32,8 +29,7 @@ public class Report {
 
     private String reportFile;
 
-//    @Column(name="manual_report")
-//    private MultipartFile manualReport;
+    //getters & setters
 
     public Long getId() {
         return id;

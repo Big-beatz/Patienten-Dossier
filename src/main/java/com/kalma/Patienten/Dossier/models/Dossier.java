@@ -2,7 +2,6 @@ package com.kalma.Patienten.Dossier.models;
 
 import jakarta.persistence.*;
 
-
 import java.util.List;
 
 @Entity
@@ -28,6 +27,8 @@ public class Dossier {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "dossier", fetch = FetchType.LAZY)
     List<Report> reports;
 
+    //getters & setters
+
     public Long getId() {
         return id;
     }
@@ -52,7 +53,6 @@ public class Dossier {
         this.name = dossierName;
     }
 
-
     public Patient getPatient() {
         return patient;
     }
@@ -68,5 +68,4 @@ public class Dossier {
     public void setReports(List<Report> reports) {
         this.reports = reports;
     }
-
 }

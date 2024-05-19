@@ -75,7 +75,6 @@ public class ReportService {
         return reportDto;
         }
 
-
     public ReportDto createManualReport(MultipartFile file, String dossierName, LocalDate date, String token) {
         //initialise
         ReportDto reportDto = new ReportDto();
@@ -102,9 +101,7 @@ public class ReportService {
         reportRepository.save(report);
 
         reportDto.id = report.getId();
-
         return reportDto;
-
     }
 
     public String uploadMamualReport(MultipartFile file) {
@@ -128,7 +125,6 @@ public class ReportService {
         return fileName;
     }
 
-
     public ResponseEntity downloadReportFile(String fileName){
         String fileUploadpath = System.getProperty("user.dir") + "/uploads";
 
@@ -143,7 +139,6 @@ public class ReportService {
                 }
             }
         }
-
         boolean contains = fileNames.contains(fileName);
         if(!contains) {
             exceptionService.FileNotFoundException("FIle Not Found");
@@ -168,7 +163,6 @@ public class ReportService {
                 .header(HttpHeaders.CONTENT_DISPOSITION, headerValue)
                 .body(resource);
     }
-
 
     //mapping functions
     public Report dtoToReport(ReportDto reportDto) {

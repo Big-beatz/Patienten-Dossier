@@ -16,6 +16,8 @@ public class Role {
     @ManyToMany(mappedBy = "roles")
     private Set<Employee> employees;
 
+    //getters & setters
+
     public String getRolename() {
         return rolename;
     }

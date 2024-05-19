@@ -102,10 +102,7 @@ public class EmployeeService {
             reportRepository.save(report);
         }
 
-
         employeeRepository.delete(employeeToDelete);
-
-
         return "Employee deleted successfully";
     }
 
@@ -129,7 +126,6 @@ public class EmployeeService {
         for (Employee employee : employees) {
             employeeDtos.add(employeeToDto(employee));
         }
-
         return employeeDtos;
     }
 

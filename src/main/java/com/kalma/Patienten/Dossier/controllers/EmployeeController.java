@@ -20,8 +20,9 @@ public class EmployeeController {
     private final EmployeeService employeeService;
     private final ExceptionService exceptionService;
 
-    //illegal action add this in the layer
-    public EmployeeController(EmployeeService employeeService, ExceptionService exceptionService) {
+    public EmployeeController(EmployeeService employeeService,
+                              ExceptionService exceptionService
+    ) {
         this.employeeService = employeeService;
         this.exceptionService = exceptionService;
     }

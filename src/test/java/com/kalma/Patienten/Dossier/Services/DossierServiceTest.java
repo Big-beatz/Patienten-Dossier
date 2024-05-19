@@ -1,7 +1,6 @@
 package com.kalma.Patienten.Dossier.Services;
 
 import com.kalma.Patienten.Dossier.dto.DossierDto;
-import com.kalma.Patienten.Dossier.dto.EmployeeDto;
 import com.kalma.Patienten.Dossier.models.Dossier;
 import com.kalma.Patienten.Dossier.models.Employee;
 import com.kalma.Patienten.Dossier.models.Patient;
@@ -21,11 +20,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.hamcrest.Matchers.any;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentCaptor.forClass;
 import static org.mockito.Mockito.*;
-import static org.postgresql.hostchooser.HostRequirement.any;
+
 
 @ExtendWith(MockitoExtension.class)
 class DossierServiceTest {
@@ -84,8 +82,7 @@ class DossierServiceTest {
 
     @Test
     void shouldCreateDossier() {
-        Long patientId = 1L;
-        when(patientRepository.findById(patientId)).thenReturn(Optional.of(patient));
+        when(patientRepository.findById(patient.getId())).thenReturn(Optional.of(patient));
         when(dossierRepository.save(ArgumentMatchers.any(Dossier.class))).thenAnswer(invocation -> {
             Dossier savedDossier = invocation.getArgument(0);
             savedDossier.setId(1L);
@@ -97,10 +94,8 @@ class DossierServiceTest {
             return savedPatient;
         });
 
-        // Act
-        DossierDto result = dossierService.createDossier(patientId, dossierDto);
+        DossierDto result = dossierService.createDossier(patient.getId(), dossierDto);
 
-        // Assert
         assertNotNull(result);
         assertEquals(dossier.getId(), result.id);
         assertEquals(dossier.getDossierIsClosed(), result.dossierIsClosed);
@@ -114,24 +109,22 @@ class DossierServiceTest {
         verify(patientRepository, times(1)).save(patientCaptor.capture());
         assertEquals(patient.getId(), patientCaptor.getValue().getId());
 
-        verify(patientRepository, times(1)).findById(patientId);
+        verify(patientRepository, times(1)).findById(patient.getId());
         verify(exceptionService, never()).RecordNotFoundException(anyString());
     }
 
     @Test
     void createShouldThrowRecordNotFoundException() {
-        Long patientId = 1L;
         patient.setDossier(dossier);
-        when(patientRepository.findById(patientId)).thenReturn(Optional.of(patient));
+        when(patientRepository.findById(patient.getId())).thenReturn(Optional.of(patient));
 
         doThrow(new RuntimeException("patient not found"))
                 .when(exceptionService).RecordNotFoundException(anyString());
 
-        // Act & Assert
-        assertThrows(RuntimeException.class, () -> dossierService.createDossier(patientId, dossierDto));
+        assertThrows(RuntimeException.class, () -> dossierService.createDossier(patient.getId(), dossierDto));
 
 
-        verify(patientRepository, times(1)).findById(patientId);
+        verify(patientRepository, times(1)).findById(patient.getId());
         verify(exceptionService, times(1)).RecordNotFoundException("patient not found");
         verify(dossierRepository, never()).save(dossier);
         verify(patientRepository, never()).save(patient);
@@ -144,10 +137,9 @@ class DossierServiceTest {
             savedDossier.setId(1L);
             return savedDossier;
         });
-        // Act
+
         DossierDto result = dossierService.createDossier(null, dossierDto);
 
-        // Assert
         assertNotNull(result);
         assertEquals(dossier.getId(), result.id);
         assertEquals(dossier.getDossierIsClosed(), result.dossierIsClosed);
@@ -220,8 +212,6 @@ class DossierServiceTest {
 
     @Test
     void shouldCloseDossierIfDossierIsOpen(){
-
-        // Mocking the necessary methods
         when(employeeService.getEmployeeByToken(token)).thenReturn(employee);
         doNothing().when(employeeService).checkIfUserIsSecretary(employee);
         when(dossierRepository.findById(dossier.getId())).thenReturn(Optional.of(dossier));
@@ -230,10 +220,9 @@ class DossierServiceTest {
             savedDossier.setId(1L);
             return savedDossier;
         });
-        // Act
+
         boolean result = dossierService.closeOrOpenDossier(dossier.getId(), token);
 
-        // Assert
         assertTrue(result);
         assertTrue(dossier.getDossierIsClosed());
         verify(employeeService, times(1)).getEmployeeByToken(token);
@@ -244,15 +233,12 @@ class DossierServiceTest {
 
     @Test
     void shouldThrowExceptionWhenDossierNotFound() {
-        // Mocking the necessary methods
         when(employeeService.getEmployeeByToken(token)).thenReturn(employee);
         doNothing().when(employeeService).checkIfUserIsSecretary(employee);
         when(dossierRepository.findById(dossier.getId())).thenReturn(Optional.empty());
 
-        // Mock the exceptionService to throw the exception
         doThrow(new RuntimeException("Dossier can not be found")).when(exceptionService).RecordNotFoundException(anyString());
 
-        // Act & Assert
         RuntimeException exception = assertThrows(RuntimeException.class, () -> dossierService.closeOrOpenDossier(dossier.getId(), token));
         assertEquals("Dossier can not be found", exception.getMessage());
 
@@ -266,13 +252,10 @@ class DossierServiceTest {
 
     @Test
     void shouldReturnDossierWhenFound() {
-        // Mocking the necessary methods
         when(dossierRepository.findById(dossier.getId())).thenReturn(Optional.of(dossier));
 
-        // Act
         Dossier result = dossierService.getDossierById(dossier.getId());
 
-        // Assert
         assertNotNull(result);
         assertEquals(dossier.getId(), result.getId());
         verify(dossierRepository, times(1)).findById(dossier.getId());
@@ -281,14 +264,10 @@ class DossierServiceTest {
 
     @Test
     void shouldThrowExceptionWhenDossierNotFoundById() {
-
-        // Mocking the necessary methods
         when(dossierRepository.findById(dossier.getId())).thenReturn(Optional.empty());
 
-        // Mock the exceptionService to throw the exception
         doThrow(new RuntimeException("Dossier can not be found")).when(exceptionService).RecordNotFoundException(anyString());
 
-        // Act & Assert
         RuntimeException exception = assertThrows(RuntimeException.class, () -> dossierService.getDossierById(dossier.getId()));
         assertEquals("Dossier can not be found", exception.getMessage());
 

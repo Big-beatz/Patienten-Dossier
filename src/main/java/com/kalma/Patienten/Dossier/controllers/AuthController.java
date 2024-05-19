@@ -1,6 +1,5 @@
 package com.kalma.Patienten.Dossier.controllers;
 
-
 import com.kalma.Patienten.Dossier.dto.AuthDto;
 import com.kalma.Patienten.Dossier.security.JwtService;
 import com.kalma.Patienten.Dossier.security.MyUserDetails;
