@@ -10,12 +10,10 @@ import javax.naming.NameAlreadyBoundException;
 
 @ControllerAdvice
 public class ExceptionController {
-    //todo check if these are even used
     @ExceptionHandler (value = RecordNotFoundException.class)
     public ResponseEntity<Object> recordNotFoundException(RecordNotFoundException exception){
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
     }
-    //todo check if these are even used
     @ExceptionHandler (value = InputNotValidException.class)
     public ResponseEntity<Object> inputNotValidException(InputNotValidException exception){
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_ACCEPTABLE);

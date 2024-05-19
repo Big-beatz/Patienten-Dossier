@@ -2,6 +2,7 @@ package com.kalma.Patienten.Dossier.Services;
 
 import com.kalma.Patienten.Dossier.dto.DossierDto;
 import com.kalma.Patienten.Dossier.dto.PatientDto;
+import com.kalma.Patienten.Dossier.models.Dossier;
 import com.kalma.Patienten.Dossier.models.Employee;
 import com.kalma.Patienten.Dossier.models.Patient;
 import com.kalma.Patienten.Dossier.repository.EmployeeRepository;
@@ -39,7 +40,6 @@ public class PatientService {
         this.exceptionService = exceptionService;
     }
 
-    //todo can only be done by Secretary
     public PatientDto createPatient(PatientDto patientDto, String token){
         //check if user is allowed to create patient
         Employee employee = employeeService.getEmployeeByToken(token);
@@ -74,6 +74,11 @@ public class PatientService {
     ){
         //getPatient
         Patient patient = getPatientById(patientId);
+
+        //checkIfDossierIsClossed
+        if(patient.getDossier().getDossierIsClosed()) {
+            exceptionService.AddingReportNotAllowedException("Dossier of "+ patient.getFullName() + " is closed");
+        }
 
         // set appointment
         patient.setNextAppointment(nextAppointment);

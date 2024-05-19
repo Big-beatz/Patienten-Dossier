@@ -52,9 +52,6 @@ public class JwtService {
             subject) {
         long validPeriod = 1000 * 60 * 60 * 24 * 10; // 10 days in ms
 
-        //todo delete before finishing project
-        long validPeriodOneMinute = 1000 * 60; //one minute
-
         long currentTime = System.currentTimeMillis();
         return Jwts.builder()
                 .setClaims(claims)

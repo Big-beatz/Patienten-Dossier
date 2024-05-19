@@ -36,7 +36,11 @@ public class PatientController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> createPatient(@Valid @RequestHeader("Authorization") String token, @RequestBody PatientDto patientDto, BindingResult br) {
+    public ResponseEntity<Object> createPatient(
+            @Valid @RequestHeader("Authorization") String token,
+            @RequestBody PatientDto patientDto,
+            BindingResult br
+    ) {
 
         if (br.hasFieldErrors()) {
             StringBuilder sb = new StringBuilder();

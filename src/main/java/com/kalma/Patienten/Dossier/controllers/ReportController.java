@@ -33,7 +33,6 @@ public class ReportController {
         return ResponseEntity.ok(reportService.getAllReports());
     }
 
-    //todo add employee ID through authentication.
     @PostMapping
     public ResponseEntity<Object> createReport(@Valid @RequestParam("body") String body,
                                                @RequestParam("dossier_name") String dossierName,
